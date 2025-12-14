@@ -73,7 +73,9 @@ Escribe en el panel:
 ¿Qué archivos tenemos y qué hace cada uno?
 ```
 
-Claude analizará la estructura y te dará un resumen. Esto es útil para orientarte.
+Claude analizará la estructura y te dará un resumen:
+
+![Claude explora la estructura del proyecto](../../assets/04-panel-claude-code-inicio.png)
 
 ### Ver un archivo específico
 
@@ -83,7 +85,9 @@ Usa `@` para referenciar archivos:
 @lib/models/task.rb explícame las validaciones
 ```
 
-El `@` abre un autocompletado de archivos. Selecciona el que quieras.
+Claude te explicará el código en detalle:
+
+![Claude explica las validaciones](../../assets/05-panel-claude-code-inicio.png)
 
 ---
 

@@ -152,7 +152,7 @@ Escribe tu primera pregunta y Claude leerá automáticamente `CLAUDE.md` para en
 ### Flujo de trabajo básico
 
 1. **Abre un proyecto** en VS Code
-2. **Abre el panel** de Claude Code (icono ✦)
+2. **Abre el panel** de Claude Code (`Ctrl+Shift+P` → `Claude Code: Open`)
 3. **Describe tu tarea** en lenguaje natural
 4. **Revisa los cambios** propuestos (diffs)
 5. **Acepta o rechaza** los cambios
