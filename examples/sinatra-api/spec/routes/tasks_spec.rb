@@ -40,6 +40,16 @@ RSpec.describe 'Tasks API' do
       expect(json_response['data'].length).to eq(1)
       expect(json_response['data'][0]['title']).to eq('High')
     end
+
+    it 'filters by tag' do
+      Task.create(title: 'With tag', tags: %w[urgent backend])
+      Task.create(title: 'Without tag', tags: %w[frontend])
+
+      get '/api/v1/tasks', tag: 'urgent'
+
+      expect(json_response['data'].length).to eq(1)
+      expect(json_response['data'][0]['title']).to eq('With tag')
+    end
   end
 
   describe 'GET /api/v1/tasks/:id' do
@@ -97,6 +107,24 @@ RSpec.describe 'Tasks API' do
 
       expect(last_response.status).to eq(400)
     end
+
+    it 'creates a task with tags' do
+      post '/api/v1/tasks',
+           { title: 'Tagged Task', tags: %w[urgent backend] }.to_json,
+           'CONTENT_TYPE' => 'application/json'
+
+      expect(last_response.status).to eq(201)
+      expect(json_response['data']['tags']).to eq(%w[urgent backend])
+    end
+
+    it 'creates a task with empty tags by default' do
+      post '/api/v1/tasks',
+           { title: 'No Tags' }.to_json,
+           'CONTENT_TYPE' => 'application/json'
+
+      expect(last_response.status).to eq(201)
+      expect(json_response['data']['tags']).to eq([])
+    end
   end
 
   describe 'PUT /api/v1/tasks/:id' do
@@ -109,6 +137,17 @@ RSpec.describe 'Tasks API' do
 
       expect(last_response.status).to eq(200)
       expect(json_response['data']['title']).to eq('New Title')
+    end
+
+    it 'updates tags' do
+      task = Task.create(title: 'Task', tags: %w[old])
+
+      put "/api/v1/tasks/#{task.id}",
+          { tags: %w[new updated] }.to_json,
+          'CONTENT_TYPE' => 'application/json'
+
+      expect(last_response.status).to eq(200)
+      expect(json_response['data']['tags']).to eq(%w[new updated])
     end
 
     it 'returns 404 for non-existent task' do

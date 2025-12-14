@@ -347,14 +347,29 @@ Activa "Extended Thinking" (botón inferior derecha del panel) para:
 
 ### Plan Mode
 
-Usa Plan Mode para revisar cambios antes de aplicarlos:
-- Claude propone un plan
-- Tú lo revisas y editas
-- Luego se ejecuta
+Para cambios significativos, Claude te preguntará si quieres entrar en modo Plan:
 
-<!-- TODO: captura 06-plan-mode.png - Claude proponiendo un plan de cambios -->
+![Claude pregunta si entrar en modo Plan](../assets/06-panel-claude-code-inicio.png)
 
-Cambiar modo: `Shift+Tab` o desde settings
+- **Yes**: Claude planifica los cambios antes de ejecutarlos
+- **No**: Claude ejecuta directamente
+- **Tell Claude what to do instead**: Da instrucciones diferentes
+
+> **Nota**: Claude hace preguntas interactivas durante el flujo. Responde según lo que necesites.
+
+Al aceptar, Claude muestra el plan detallado:
+
+![Plan propuesto por Claude](../assets/07-panel-claude-code-inicio.png)
+
+Opciones de **"Accept this plan?"**:
+- **Yes, and auto-accept**: Ejecuta todo automáticamente
+- **Yes, and manually approve edits**: Revisa cada cambio individualmente
+- **No, keep planning**: Refina el plan
+- **Tell Claude what to do instead**: Cambia de dirección
+
+Con **"Yes, and manually approve edits"**, Claude muestra cada diff y pregunta antes de guardar:
+
+![Diff con pregunta para guardar](../assets/08-panel-claude-code-inicio.png)
 
 ### Auto-accept edits
 

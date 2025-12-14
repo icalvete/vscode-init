@@ -16,12 +16,15 @@ require 'rack/test'
 require 'rspec'
 require 'json'
 
-# Cargar la aplicación
-require_relative '../app'
+# Cargar configuración de base de datos primero
+require_relative '../config/database'
 
-# Ejecutar migraciones en memoria
+# Ejecutar migraciones en memoria ANTES de cargar modelos
 Sequel.extension :migration
 Sequel::Migrator.run(DB, 'db/migrations')
+
+# Cargar la aplicación (modelos y rutas)
+require_relative '../app'
 
 RSpec.configure do |config|
   config.include Rack::Test::Methods

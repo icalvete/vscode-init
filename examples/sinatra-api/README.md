@@ -101,37 +101,64 @@ Escribe:
 Añade un campo 'tags' al modelo Task. Debe ser un array de strings.
 ```
 
-### Revisar el diff
+### Modo Plan
 
-Claude te mostrará los cambios propuestos:
+Para cambios significativos, Claude te preguntará si quieres entrar en modo Plan:
 
-```diff
-# lib/models/task.rb
-+ serialize :tags, Array
+![Claude pregunta si entrar en modo Plan](../../assets/06-panel-claude-code-inicio.png)
 
-# db/migrations/002_add_tags_to_tasks.rb (nuevo archivo)
-+ Sequel.migration do
-+   change do
-+     add_column :tasks, :tags, :text
-+   end
-+ end
-```
+- **Yes**: Claude planifica los cambios antes de ejecutarlos
+- **No**: Claude ejecuta directamente
+- **Tell Claude what to do instead**: Da instrucciones diferentes
 
-### Aceptar o rechazar
+> **Nota**: Claude hace preguntas interactivas durante el flujo. Responde según lo que necesites.
 
-En el panel verás botones:
+### Revisar el plan
 
-```
-┌─────────────────────────────────────────┐
-│  [✓ Aceptar]  [✗ Rechazar]  [Ver más]   │
-└─────────────────────────────────────────┘
-```
+Responde **Yes** y Claude te mostrará el plan detallado:
 
-- **Aceptar**: Aplica los cambios al archivo
-- **Rechazar**: Descarta la propuesta
-- **Ver más**: Expande el diff completo
+![Plan propuesto por Claude](../../assets/07-panel-claude-code-inicio.png)
 
-**Tip**: Haz `Ctrl+Click` en cualquier diff para ver el contexto completo.
+El plan incluye:
+- Archivos a modificar y qué cambios hará en cada uno
+- Enfoque técnico (ej: cómo manejar arrays en SQLite)
+- Ejemplo de uso
+
+### Aceptar el plan
+
+Claude pregunta **"Accept this plan?"**:
+
+- **Yes, and auto-accept**: Ejecuta todo automáticamente
+- **Yes, and manually approve edits**: Revisa cada cambio antes de aplicarlo
+- **No, keep planning**: Sigue refinando el plan
+- **Tell Claude what to do instead**: Cambia de dirección
+
+### Revisar cada cambio
+
+Con **"Yes, and manually approve edits"**, Claude te muestra cada diff y pregunta antes de guardar:
+
+![Diff de la migración](../../assets/08-panel-claude-code-inicio.png)
+
+El proceso se repite para cada archivo del plan:
+
+![Diff del modelo](../../assets/09-panel-claude-code-inicio.png)
+
+- **Yes**: Guarda este archivo
+- **Yes, and don't ask again**: Guarda este y los siguientes sin preguntar
+- **No**: Rechaza este cambio
+- **Tell Claude what to do instead**: Pide modificaciones
+
+> En este tutorial elegimos **"Yes, and don't ask again"** para que Claude aplique el resto de cambios automáticamente.
+
+> **Nota**: Claude también puede pedir permiso para ejecutar comandos como `bundle install` o `bundle exec rspec`. Acepta para que complete el flujo.
+
+> **Iteración automática**: Si los tests fallan, Claude corrige el código y vuelve a ejecutarlos. Este ciclo se repite hasta que todo pase. Es normal y parte del flujo.
+
+### Resultado final
+
+Cuando termina, Claude muestra un resumen de los cambios realizados:
+
+![Cambios completados con éxito](../../assets/10-panel-claude-code-inicio.png)
 
 ---
 

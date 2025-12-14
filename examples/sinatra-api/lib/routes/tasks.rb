@@ -13,6 +13,7 @@ module Routes
         tasks = tasks.pending if params[:completed] == 'false'
         tasks = tasks.by_priority(params[:priority].to_i) if params[:priority]
         tasks = tasks.overdue if params[:overdue] == 'true'
+        tasks = tasks.by_tag(params[:tag]) if params[:tag]
 
         # Ordenamiento
         tasks = case params[:sort]
@@ -43,7 +44,8 @@ module Routes
           title: data['title'],
           description: data['description'],
           priority: data['priority'],
-          due_date: data['due_date'] ? Date.parse(data['due_date']) : nil
+          due_date: data['due_date'] ? Date.parse(data['due_date']) : nil,
+          tags: data['tags'] || []
         )
 
         status 201
@@ -62,7 +64,8 @@ module Routes
           description: data.key?('description') ? data['description'] : task.description,
           priority: data['priority'] || task.priority,
           completed: data.key?('completed') ? data['completed'] : task.completed,
-          due_date: data['due_date'] ? Date.parse(data['due_date']) : task.due_date
+          due_date: data['due_date'] ? Date.parse(data['due_date']) : task.due_date,
+          tags: data.key?('tags') ? data['tags'] : task.tags
         )
 
         json(data: task.to_json_hash)

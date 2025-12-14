@@ -1,14 +1,35 @@
 # frozen_string_literal: true
 
+require 'json'
+
 # Modelo Task
 # Representa una tarea en el sistema
 class Task < Sequel::Model
+  # Serialización de tags (almacenado como JSON string)
+  def tags
+    JSON.parse(super || '[]')
+  end
+
+  def tags=(value)
+    super(value.is_a?(Array) ? value.to_json : value)
+  end
+
   # Validaciones
   def validate
     super
     validates_presence :title
     validates_max_length 255, :title
     validates_includes 1..5, :priority if priority
+    validate_tags
+  end
+
+  def validate_tags
+    return unless self[:tags]
+
+    parsed = JSON.parse(self[:tags]) rescue nil
+    unless parsed.is_a?(Array) && parsed.all? { |t| t.is_a?(String) }
+      errors.add(:tags, 'must be an array of strings')
+    end
   end
 
   # Callbacks
@@ -50,6 +71,7 @@ class Task < Sequel::Model
       completed: completed,
       priority: priority,
       due_date: due_date&.iso8601,
+      tags: tags,
       overdue: overdue?,
       created_at: created_at&.iso8601,
       updated_at: updated_at&.iso8601
@@ -91,6 +113,11 @@ class Task < Sequel::Model
     # Ordenar por fecha de vencimiento
     def by_due_date
       order(:due_date)
+    end
+
+    # Filtrar por tag
+    def by_tag(tag)
+      where(Sequel.lit("tags LIKE ?", "%\"#{tag}\"%"))
     end
   end
 end
