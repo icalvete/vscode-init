@@ -210,6 +210,8 @@ Los comandos slash te permiten acceder a funcionalidades avanzadas:
 | `/security-review` | Revisión de seguridad de cambios |
 | `/pr-comments` | Ver comentarios de PR de GitHub |
 
+> **Nota**: `/review`, `/security-review` y `/pr-comments` funcionan mejor con [GitHub CLI](https://cli.github.com/) (`gh`) instalado.
+
 ### Herramientas
 
 | Comando | Descripción |

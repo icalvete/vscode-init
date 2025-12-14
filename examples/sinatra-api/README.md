@@ -245,7 +245,15 @@ bundle exec rspec spec/routes/tasks_spec.rb
 /review
 ```
 
-Claude analizará el código y sugerirá mejoras.
+Claude analizará el código y puede pedir permiso para ejecutar comandos:
+
+![Review pidiendo permiso para gh](../../assets/11-panel-claude-code-inicio.png)
+
+> **Nota**: Si tienes [GitHub CLI](https://cli.github.com/) (`gh`) instalado, Claude lo usará para revisar PRs abiertos. Si no lo tienes, la revisión se limitará al código local.
+
+El resultado incluye análisis con puntos positivos y sugerencias:
+
+![Resultado del code review](../../assets/12-panel-claude-code-inicio.png)
 
 ### Pedir refactoring específico
 
