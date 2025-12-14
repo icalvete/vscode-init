@@ -143,6 +143,11 @@ El proceso se repite para cada archivo del plan:
 
 ![Diff del modelo](../../assets/09-panel-claude-code-inicio.png)
 
+**Tips para ver diffs:**
+- Arrastra el borde del panel para hacerlo más ancho y ver más contexto
+- El código nuevo aparece en verde, el eliminado en rojo
+- Haz clic en el nombre del archivo para ver el diff completo en el editor
+
 - **Yes**: Guarda este archivo
 - **Yes, and don't ask again**: Guarda este y los siguientes sin preguntar
 - **No**: Rechaza este cambio
@@ -162,39 +167,7 @@ Cuando termina, Claude muestra un resumen de los cambios realizados:
 
 ---
 
-## Paso 4: Ver diffs en detalle
-
-### Expandir el panel
-
-Arrastra el borde del panel de Claude Code hacia la derecha para hacerlo más ancho.
-
-```
-Ancho normal:          Ancho expandido:
-┌──────┐               ┌────────────────────────┐
-│ diff │               │ - línea eliminada      │
-│ ...  │               │ + línea añadida        │
-└──────┘               │ + otra línea añadida   │
-                       └────────────────────────┘
-```
-
-Con más espacio, los diffs se muestran inline completos.
-
-### Navegar entre cambios
-
-Si Claude propone cambios en varios archivos:
-
-```
-Archivos modificados:
-├── lib/models/task.rb         [Ver diff]
-├── lib/routes/tasks.rb        [Ver diff]
-└── spec/routes/tasks_spec.rb  [Ver diff]
-```
-
-Haz clic en cada uno para revisar individualmente.
-
----
-
-## Paso 5: Trabajar con errores
+## Paso 4: Trabajar con errores
 
 ### Compartir errores automáticamente
 
@@ -228,7 +201,7 @@ Failures:
 
 ---
 
-## Paso 6: Flujo TDD con Claude Code
+## Paso 5: Flujo TDD con Claude Code
 
 ### 1. Pedir el test primero
 
@@ -264,7 +237,7 @@ bundle exec rspec spec/routes/tasks_spec.rb
 
 ---
 
-## Paso 7: Refactoring guiado
+## Paso 6: Refactoring guiado
 
 ### Pedir revisión
 
@@ -303,7 +276,7 @@ Claude te mostrará:
 
 ---
 
-## Paso 8: Commits con Claude Code
+## Paso 7: Commits con Claude Code
 
 ### Desde VS Code
 
@@ -331,7 +304,7 @@ feat: add tags field to Task model
 
 ---
 
-## Paso 9: Comandos útiles
+## Paso 8: Comandos útiles
 
 ### Comandos slash
 
@@ -356,7 +329,7 @@ Escríbelos directamente en el panel:
 
 ---
 
-## Paso 10: Guardar aprendizajes
+## Paso 9: Guardar aprendizajes
 
 ### Actualizar CLAUDE.md
 
