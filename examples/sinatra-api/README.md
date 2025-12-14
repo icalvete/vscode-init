@@ -1,149 +1,424 @@
-# Tasks API - Ejemplo de desarrollo con Claude Code
+# Tutorial práctico: VS Code + Claude Code
 
-Este proyecto es un ejemplo didáctico para aprender a desarrollar con **Claude Code** en VS Code.
+Este tutorial te guía paso a paso para desarrollar una API con **Visual Studio Code** y la extensión **Claude Code**.
 
-## Objetivo
+## Antes de empezar
 
-Construir una API REST completa usando:
-- Ruby + Sinatra
-- TDD con RSpec
-- Claude Code como asistente de desarrollo
-
-## Requisitos
-
-- Ruby 3.2+
-- Bundler
-- SQLite3
-- Claude Code (CLI + extensión VS Code)
-
-## Tutorial paso a paso
-
-### Paso 1: Preparar el entorno
+### Verificar instalación
 
 ```bash
-# Clonar el proyecto base
-cd examples/sinatra-api
-
-# Instalar dependencias
-bundle install
-
-# Verificar Claude Code
+# Verificar que todo está instalado
 vscode-config claude-code status
 ```
 
-### Paso 2: Abrir en VS Code con Claude Code
+Deberías ver:
+```
+✓ Claude Code CLI instalado
+✓ Autenticado
+✓ anthropic.claude-code instalada
+✓ Node.js: v20.x.x
+✓ VS Code: 1.9x.x
+```
+
+Si falta algo:
+```bash
+# Instalar CLI
+curl -fsSL https://claude.ai/install.sh | bash
+
+# Configurar VS Code
+vscode-config claude-code setup
+
+# Autenticarse
+claude login
+```
+
+---
+
+## Paso 1: Abrir el proyecto en VS Code
 
 ```bash
-# Abrir VS Code
+cd examples/sinatra-api
 code .
 ```
 
-1. Abre el panel de Claude Code (icono ✦)
-2. Claude leerá automáticamente `CLAUDE.md`
+### Localizar el panel de Claude Code
 
-### Paso 3: Crear la estructura inicial
-
-Pide a Claude:
-
-```
-Crea la estructura básica del proyecto según CLAUDE.md:
-1. Gemfile con las dependencias
-2. config.ru para Rack
-3. app.rb con configuración básica de Sinatra
-```
-
-### Paso 4: Configurar la base de datos
+1. Mira la **barra lateral izquierda**
+2. Busca el icono **✦** (Spark) - suele estar abajo
+3. Haz clic para abrir el panel
 
 ```
-Configura Sequel con SQLite para desarrollo.
-Crea la migración para la tabla tasks según el modelo en CLAUDE.md.
+┌─────────────────────────────────────────────────┐
+│  Explorador  │  Buscar  │  Git  │  ✦ Claude    │
+└─────────────────────────────────────────────────┘
+                                    ↑
+                              Haz clic aquí
 ```
 
-### Paso 5: Crear el modelo Task
+### Primera interacción
+
+Al abrir, Claude Code lee automáticamente `CLAUDE.md`. Verás algo como:
 
 ```
-Crea el modelo Task en lib/models/task.rb con:
-- Validaciones según CLAUDE.md
-- Métodos para marcar como completada
-- Scopes para filtrar por estado y prioridad
+Claude Code
+───────────────────────────
+Hola! He leído el archivo CLAUDE.md de tu proyecto.
+Es una API de tareas con Sinatra. ¿En qué puedo ayudarte?
+
+> _
 ```
 
-### Paso 6: Implementar las rutas (TDD)
+---
+
+## Paso 2: Explorar el proyecto con Claude
+
+### Pedir un resumen
+
+Escribe en el panel:
 
 ```
-Implementa las rutas de la API usando TDD:
-1. Primero escribe el test en spec/routes/tasks_spec.rb
-2. Luego implementa la ruta en lib/routes/tasks.rb
-Empezamos con GET /api/v1/tasks
+¿Qué archivos tenemos y qué hace cada uno?
 ```
 
-Repite para cada endpoint.
+Claude analizará la estructura y te dará un resumen. Esto es útil para orientarte.
 
-### Paso 7: Refactoring
+### Ver un archivo específico
 
-```
-Revisa el código y sugiere mejoras:
-- DRY en las rutas
-- Manejo de errores consistente
-- Documentación YARD
-```
-
-### Paso 8: Commits
+Usa `@` para referenciar archivos:
 
 ```
-Crea commits atómicos para cada feature implementada.
-Usa conventional commits (feat:, fix:, refactor:, test:, docs:)
+@lib/models/task.rb explícame las validaciones
 ```
 
-## Comandos Claude Code útiles
+El `@` abre un autocompletado de archivos. Selecciona el que quieras.
 
-Durante el desarrollo, usa estos comandos:
+---
 
-| Comando | Uso |
-|---------|-----|
-| `/review` | Revisar código antes de commit |
-| `/memory` | Actualizar CLAUDE.md con aprendizajes |
-| `/compact` | Reducir contexto si la conversación es larga |
-| `@archivo` | Referenciar archivos específicos |
+## Paso 3: Hacer tu primer cambio
 
-## Estructura final esperada
+### Pedir una modificación
+
+Escribe:
 
 ```
-sinatra-api/
-├── CLAUDE.md
-├── README.md
-├── Gemfile
-├── Gemfile.lock
-├── Rakefile
-├── config.ru
-├── app.rb
-├── config/
-│   └── database.rb
-├── db/
-│   ├── migrations/
-│   │   └── 001_create_tasks.rb
-│   └── development.sqlite3
-├── lib/
-│   ├── models/
-│   │   └── task.rb
-│   └── routes/
-│       └── tasks.rb
-└── spec/
-    ├── spec_helper.rb
-    └── routes/
-        └── tasks_spec.rb
+Añade un campo 'tags' al modelo Task. Debe ser un array de strings.
 ```
 
-## Tips para el tutorial
+### Revisar el diff
 
-1. **Lee CLAUDE.md primero** - Claude lo usa como contexto
-2. **Sé específico** - Describe exactamente qué quieres
-3. **Revisa los diffs** - No aceptes cambios sin revisar
-4. **Usa TDD** - Es más efectivo con Claude Code
-5. **Haz commits frecuentes** - Checkpoints de tu progreso
+Claude te mostrará los cambios propuestos:
 
-## Aprende más
+```diff
+# lib/models/task.rb
++ serialize :tags, Array
 
-- [Guía completa de Claude Code](../docs/claude-code.md)
-- [Documentación de Sinatra](https://sinatrarb.com/)
-- [Documentación de Sequel](https://sequel.jeremyevans.net/)
+# db/migrations/002_add_tags_to_tasks.rb (nuevo archivo)
++ Sequel.migration do
++   change do
++     add_column :tasks, :tags, :text
++   end
++ end
+```
+
+### Aceptar o rechazar
+
+En el panel verás botones:
+
+```
+┌─────────────────────────────────────────┐
+│  [✓ Aceptar]  [✗ Rechazar]  [Ver más]   │
+└─────────────────────────────────────────┘
+```
+
+- **Aceptar**: Aplica los cambios al archivo
+- **Rechazar**: Descarta la propuesta
+- **Ver más**: Expande el diff completo
+
+**Tip**: Haz `Ctrl+Click` en cualquier diff para ver el contexto completo.
+
+---
+
+## Paso 4: Ver diffs en detalle
+
+### Expandir el panel
+
+Arrastra el borde del panel de Claude Code hacia la derecha para hacerlo más ancho.
+
+```
+Ancho normal:          Ancho expandido:
+┌──────┐               ┌────────────────────────┐
+│ diff │               │ - línea eliminada      │
+│ ...  │               │ + línea añadida        │
+└──────┘               │ + otra línea añadida   │
+                       └────────────────────────┘
+```
+
+Con más espacio, los diffs se muestran inline completos.
+
+### Navegar entre cambios
+
+Si Claude propone cambios en varios archivos:
+
+```
+Archivos modificados:
+├── lib/models/task.rb         [Ver diff]
+├── lib/routes/tasks.rb        [Ver diff]
+└── spec/routes/tasks_spec.rb  [Ver diff]
+```
+
+Haz clic en cada uno para revisar individualmente.
+
+---
+
+## Paso 5: Trabajar con errores
+
+### Compartir errores automáticamente
+
+Si tienes errores en el código (subrayados rojos), Claude Code los detecta automáticamente cuando mencionas el archivo.
+
+```
+@lib/routes/tasks.rb hay un error en la línea 45, ¿puedes arreglarlo?
+```
+
+### Copiar errores de la terminal
+
+Si ejecutas tests y fallan:
+
+```bash
+bundle exec rspec
+```
+
+Copia el error y pégalo en el panel:
+
+```
+Este test falla:
+
+Failures:
+  1) Tasks API POST /api/v1/tasks creates a task with tags
+     Failure/Error: expect(json_response['data']['tags']).to eq(['urgent'])
+     expected: ["urgent"]
+          got: nil
+
+¿Puedes arreglarlo?
+```
+
+---
+
+## Paso 6: Flujo TDD con Claude Code
+
+### 1. Pedir el test primero
+
+```
+Escribe un test para un nuevo endpoint GET /api/v1/tasks/overdue
+que devuelva solo las tareas vencidas
+```
+
+Claude creará el test en `spec/routes/tasks_spec.rb`.
+
+### 2. Ver que falla
+
+```bash
+bundle exec rspec spec/routes/tasks_spec.rb
+```
+
+El test fallará porque el endpoint no existe.
+
+### 3. Pedir la implementación
+
+```
+Ahora implementa el endpoint para que el test pase
+```
+
+Claude modificará `lib/routes/tasks.rb`.
+
+### 4. Verificar
+
+```bash
+bundle exec rspec spec/routes/tasks_spec.rb
+# => 0 failures
+```
+
+---
+
+## Paso 7: Refactoring guiado
+
+### Pedir revisión
+
+```
+/review
+```
+
+Claude analizará el código y sugerirá mejoras.
+
+### Pedir refactoring específico
+
+```
+El método de filtrado en @lib/routes/tasks.rb está muy largo.
+¿Puedes extraerlo a un método privado?
+```
+
+### Ver el antes y después
+
+Claude te mostrará:
+
+```diff
+- # Código inline largo
+- tasks = Task.dataset
+- tasks = tasks.completed if params[:completed] == 'true'
+- tasks = tasks.pending if params[:completed] == 'false'
+- # ... más líneas
+
++ tasks = apply_filters(Task.dataset, params)
+
++ private
++
++ def apply_filters(dataset, params)
++   # Lógica extraída aquí
++ end
+```
+
+---
+
+## Paso 8: Commits con Claude Code
+
+### Desde VS Code
+
+Después de hacer cambios:
+
+```
+Crea un commit con los cambios actuales
+```
+
+Claude:
+1. Ejecutará `git status` y `git diff`
+2. Propondrá un mensaje de commit
+3. Te pedirá confirmación
+
+```
+Cambios detectados:
+- lib/models/task.rb (modificado)
+- db/migrations/002_add_tags.rb (nuevo)
+
+Mensaje propuesto:
+feat: add tags field to Task model
+
+¿Crear commit? [Sí/No]
+```
+
+---
+
+## Paso 9: Comandos útiles
+
+### Comandos slash
+
+Escríbelos directamente en el panel:
+
+| Comando | Qué hace |
+|---------|----------|
+| `/clear` | Limpia la conversación |
+| `/review` | Revisa el código del proyecto |
+| `/memory` | Abre CLAUDE.md para editarlo |
+| `/cost` | Muestra tokens usados |
+| `/model` | Cambia el modelo (Sonnet/Opus) |
+
+### Atajos en el panel
+
+| Acción | Cómo hacerlo |
+|--------|--------------|
+| Referenciar archivo | Escribe `@` y selecciona |
+| Ver diff expandido | `Ctrl+Click` en el diff |
+| Nueva línea | `Shift+Enter` |
+| Cancelar | `Ctrl+C` |
+
+---
+
+## Paso 10: Guardar aprendizajes
+
+### Actualizar CLAUDE.md
+
+Cuando descubras algo importante sobre el proyecto:
+
+```
+#Nota: los tags se guardan como JSON serializado, no como array nativo
+```
+
+El `#` al inicio añade la nota a `CLAUDE.md` automáticamente.
+
+### O manualmente
+
+```
+/memory
+```
+
+Se abrirá `CLAUDE.md` en el editor. Añade notas como:
+
+```markdown
+## Notas de desarrollo
+
+- Los tags se serializan como JSON en SQLite
+- El endpoint /overdue usa el scope `Task.overdue`
+```
+
+---
+
+## Resumen del flujo de trabajo
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                                                         │
+│  1. Abrir VS Code con el proyecto                       │
+│         ↓                                               │
+│  2. Abrir panel Claude Code (icono ✦)                   │
+│         ↓                                               │
+│  3. Describir qué quieres hacer                         │
+│         ↓                                               │
+│  4. Revisar los diffs propuestos                        │
+│         ↓                                               │
+│  5. Aceptar/Rechazar cambios                            │
+│         ↓                                               │
+│  6. Ejecutar tests para verificar                       │
+│         ↓                                               │
+│  7. Commit cuando esté listo                            │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Errores comunes
+
+### "Claude Code no responde"
+
+1. Verifica conexión a internet
+2. Ejecuta `claude auth status` en terminal
+3. Reinicia VS Code
+
+### "No veo los diffs"
+
+- Expande el panel (arrástralo más ancho)
+- Haz clic en "Ver más" o `Ctrl+Click`
+
+### "Los cambios no se aplican"
+
+- Asegúrate de hacer clic en "Aceptar"
+- Verifica que el archivo no esté bloqueado
+- Guarda el archivo después de aceptar (`Ctrl+S`)
+
+---
+
+## Siguiente paso
+
+Abre este proyecto en VS Code y prueba:
+
+```bash
+code .
+```
+
+Luego en el panel de Claude Code:
+
+```
+Hola! Veo que ya hay código base.
+¿Puedes añadir un endpoint para buscar tareas por título?
+```
+
+Y sigue el flujo: revisar diff → aceptar → probar → commit.
