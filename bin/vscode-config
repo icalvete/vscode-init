@@ -1,0 +1,768 @@
+#!/bin/bash
+#
+# vscode-config
+# =============
+# Gestiona la configuración global de Visual Studio Code.
+#
+# Uso:
+#   vscode-config setup              Aplica configuración recomendada
+#   vscode-config backup <dir>       Backup de configuración actual
+#   vscode-config restore <dir>      Restaura desde backup
+#   vscode-config show               Muestra configuración actual
+#   vscode-config --help             Muestra ayuda
+#
+# Ejemplos:
+#   vscode-config setup
+#   vscode-config backup ~/vscode-backup
+#   vscode-config restore ~/vscode-backup
+#
+
+set -e
+
+# ============================================================================
+# CONFIGURACIÓN
+# ============================================================================
+
+# Detectar sistema operativo y rutas
+case "$(uname -s)" in
+    Linux*)
+        VSCODE_CONFIG_DIR="${VSCODE_CONFIG_DIR:-$HOME/.config/Code}"
+        VSCODE_EXTENSIONS_DIR="$HOME/.vscode/extensions"
+        ;;
+    Darwin*)
+        VSCODE_CONFIG_DIR="${VSCODE_CONFIG_DIR:-$HOME/Library/Application Support/Code}"
+        VSCODE_EXTENSIONS_DIR="$HOME/.vscode/extensions"
+        ;;
+    *)
+        echo "Sistema operativo no soportado" >&2
+        exit 1
+        ;;
+esac
+
+VSCODE_USER_DIR="$VSCODE_CONFIG_DIR/User"
+VSCODE_SETTINGS="$VSCODE_USER_DIR/settings.json"
+VSCODE_KEYBINDINGS="$VSCODE_USER_DIR/keybindings.json"
+VSCODE_ARGV="$VSCODE_USER_DIR/../argv.json"
+
+# Colores
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+BOLD='\033[1m'
+NC='\033[0m'
+
+# ============================================================================
+# FUNCIONES AUXILIARES
+# ============================================================================
+
+ok() {
+    echo -e "${GREEN}✓${NC} $1"
+}
+
+info() {
+    echo -e "${BLUE}→${NC} $1"
+}
+
+warn() {
+    echo -e "${YELLOW}!${NC} $1"
+}
+
+error() {
+    echo -e "${RED}✗${NC} $1" >&2
+    exit 1
+}
+
+show_help() {
+    cat << 'EOF'
+vscode-config - Gestiona la configuración global de Visual Studio Code
+
+USO
+    vscode-config <comando> [argumentos]
+
+COMANDOS
+    setup               Aplica configuración recomendada (privacidad + productividad)
+    backup <dir>        Guarda backup de configuración actual
+    restore <dir>       Restaura configuración desde backup
+    show                Muestra configuración actual
+    extensions list     Lista extensiones instaladas
+    extensions backup <file>    Guarda lista de extensiones
+    extensions restore <file>   Instala extensiones desde lista
+
+OPCIONES
+    --help, -h          Muestra esta ayuda
+
+EJEMPLOS
+    vscode-config setup
+        Aplica configuración segura y productiva
+
+    vscode-config backup ~/vscode-backup
+        Guarda settings, keybindings, snippets y lista de extensiones
+
+    vscode-config restore ~/vscode-backup
+        Restaura configuración (pide confirmación)
+
+    vscode-config extensions list
+        Muestra extensiones instaladas
+
+CONFIGURACIÓN RECOMENDADA (setup)
+    Privacidad:
+    - Telemetry Level: off (desactiva toda telemetría)
+    - Crash Reporter: Desactivado
+    - Online Services: Controlado
+    - Extensions: Telemetría de extensiones comunes desactivada
+
+    Seguridad:
+    - Workspace Trust: Activado (pregunta antes de ejecutar código)
+    - Untrusted Files: Prompt (pide confirmación)
+    - Git: Autofetch desactivado (evita ejecución automática)
+
+    Productividad:
+    - Auto Save: afterDelay (guarda automáticamente)
+    - Format On Save: Activado
+    - Bracket Pair Colorization: Activado
+    - Smooth Scrolling: Activado
+
+ARCHIVOS
+    ~/.config/Code/User/settings.json     Configuración principal (Linux)
+    ~/.config/Code/User/keybindings.json  Atajos de teclado
+    ~/.config/Code/User/snippets/         Snippets personalizados
+
+MÁS INFORMACIÓN
+    https://github.com/icalvete/vscode-init
+EOF
+    exit 0
+}
+
+# Verifica que jq está instalado
+check_jq() {
+    if ! command -v jq &> /dev/null; then
+        error "Este comando requiere 'jq' para manipular JSON.
+
+Instálalo con:
+  Ubuntu/Debian: sudo apt install jq
+  Mac: brew install jq
+  Fedora: sudo dnf install jq"
+    fi
+}
+
+# Verifica que existe el directorio de VS Code
+check_vscode_installed() {
+    if [[ ! -d "$VSCODE_CONFIG_DIR" ]]; then
+        error "No se encuentra el directorio de VS Code: $VSCODE_CONFIG_DIR
+
+¿Está VS Code instalado? Ábrelo al menos una vez para que cree la configuración."
+    fi
+}
+
+# Lee un valor del settings.json
+get_setting() {
+    local key="$1"
+    if [[ -f "$VSCODE_SETTINGS" ]]; then
+        local value=$(jq "$key" "$VSCODE_SETTINGS" 2>/dev/null)
+        if [[ "$value" == "null" || -z "$value" ]]; then
+            echo "no definido"
+        else
+            echo "$value" | tr -d '"'
+        fi
+    else
+        echo "no definido"
+    fi
+}
+
+# Escribe/actualiza un valor en settings.json
+set_setting() {
+    local key="$1"
+    local value="$2"
+    local temp_file=$(mktemp)
+
+    # Crear archivo si no existe
+    if [[ ! -f "$VSCODE_SETTINGS" ]]; then
+        mkdir -p "$VSCODE_USER_DIR"
+        echo '{}' > "$VSCODE_SETTINGS"
+    fi
+
+    # Actualizar valor
+    jq "$key = $value" "$VSCODE_SETTINGS" > "$temp_file"
+    mv "$temp_file" "$VSCODE_SETTINGS"
+}
+
+# ============================================================================
+# COMANDO: setup
+# ============================================================================
+
+cmd_setup() {
+    echo ""
+    echo -e "${BOLD}vscode-config setup${NC}"
+    echo ""
+
+    check_jq
+    check_vscode_installed
+
+    warn "Esto modificará tu configuración de VS Code."
+    echo ""
+    echo "Configuración que se aplicará:"
+    echo ""
+    echo -e "  ${BLUE}Privacidad:${NC}"
+    echo "    - Telemetry Level: off"
+    echo "    - Crash Reporter: Desactivado"
+    echo "    - Online Services: Controlado"
+    echo "    - Extensiones populares: Telemetría desactivada"
+    echo ""
+    echo -e "  ${BLUE}Seguridad:${NC}"
+    echo "    - Workspace Trust: Activado"
+    echo "    - Git Autofetch: Desactivado"
+    echo "    - Abrir enlaces externos: Preguntar"
+    echo ""
+    echo -e "  ${BLUE}Productividad:${NC}"
+    echo "    - Auto Save: afterDelay (1000ms)"
+    echo "    - Format On Save: Activado"
+    echo "    - Bracket Pair Colorization: Activado"
+    echo "    - Minimap: Desactivado (más espacio)"
+    echo ""
+
+    read -p "¿Continuar? [y/N] " -n 1 -r
+    echo ""
+
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        echo "Cancelado."
+        exit 0
+    fi
+
+    echo ""
+    info "Aplicando configuración..."
+
+    # Crear backup antes de modificar
+    local backup_file="$VSCODE_USER_DIR/settings.json.backup.$(date +%Y%m%d_%H%M%S)"
+    if [[ -f "$VSCODE_SETTINGS" ]]; then
+        cp "$VSCODE_SETTINGS" "$backup_file"
+        ok "Backup creado: $backup_file"
+    fi
+
+    # Crear settings.json si no existe
+    if [[ ! -f "$VSCODE_SETTINGS" ]]; then
+        mkdir -p "$VSCODE_USER_DIR"
+        echo '{}' > "$VSCODE_SETTINGS"
+    fi
+
+    echo ""
+    info "Aplicando configuración de privacidad..."
+
+    # =========================================
+    # PRIVACIDAD - Telemetría
+    # =========================================
+
+    # Telemetría principal de VS Code
+    set_setting '."telemetry.telemetryLevel"' '"off"'
+    ok "Telemetry Level: off"
+
+    # Setting legacy (aún respetado por algunas versiones)
+    set_setting '."telemetry.enableTelemetry"' 'false'
+    ok "Enable Telemetry: false (legacy)"
+
+    # Desactivar servicios online opcionales
+    set_setting '."workbench.enableExperiments"' 'false'
+    ok "Experiments: Desactivados"
+
+    set_setting '."workbench.settings.enableNaturalLanguageSearch"' 'false'
+    ok "Natural Language Search: Desactivado (usa Bing)"
+
+    # Desactivar telemetría de extensiones populares
+    set_setting '."redhat.telemetry.enabled"' 'false'
+    ok "RedHat Telemetry: Desactivada"
+
+    set_setting '."julia.enableTelemetry"' 'false'
+    ok "Julia Telemetry: Desactivada"
+
+    set_setting '."Lua.telemetry.enable"' 'false'
+    ok "Lua Telemetry: Desactivada"
+
+    set_setting '."gitlens.telemetry.enabled"' 'false'
+    ok "GitLens Telemetry: Desactivada"
+
+    set_setting '."aws.telemetry"' 'false'
+    ok "AWS Telemetry: Desactivada"
+
+    set_setting '."terraform.telemetry.enabled"' 'false'
+    ok "Terraform Telemetry: Desactivada"
+
+    echo ""
+    info "Aplicando configuración de seguridad..."
+
+    # =========================================
+    # SEGURIDAD
+    # =========================================
+
+    # Workspace Trust - Importante para seguridad
+    set_setting '."security.workspace.trust.enabled"' 'true'
+    ok "Workspace Trust: Activado"
+
+    set_setting '."security.workspace.trust.untrustedFiles"' '"prompt"'
+    ok "Untrusted Files: Prompt"
+
+    set_setting '."security.workspace.trust.startupPrompt"' '"once"'
+    ok "Trust Startup Prompt: Once"
+
+    # Git - Evitar ejecución automática
+    set_setting '."git.autofetch"' 'false'
+    ok "Git Autofetch: Desactivado"
+
+    set_setting '."git.confirmSync"' 'true'
+    ok "Git Confirm Sync: Activado"
+
+    # Terminal - Seguridad
+    set_setting '."terminal.integrated.enablePersistentSessions"' 'false'
+    ok "Terminal Persistent Sessions: Desactivado"
+
+    # Enlaces externos
+    set_setting '."workbench.externalUriOpeners"' '{}'
+    ok "External URI Openers: Controlado"
+
+    echo ""
+    info "Aplicando configuración de productividad..."
+
+    # =========================================
+    # PRODUCTIVIDAD
+    # =========================================
+
+    # Auto Save
+    set_setting '."files.autoSave"' '"afterDelay"'
+    set_setting '."files.autoSaveDelay"' '1000'
+    ok "Auto Save: afterDelay (1000ms)"
+
+    # Format on Save
+    set_setting '."editor.formatOnSave"' 'true'
+    ok "Format On Save: Activado"
+
+    # Bracket Pair Colorization (nativo, más rápido que extensiones)
+    set_setting '."editor.bracketPairColorization.enabled"' 'true'
+    set_setting '."editor.guides.bracketPairs"' '"active"'
+    ok "Bracket Pair Colorization: Activado"
+
+    # Minimap - Desactivado para más espacio
+    set_setting '."editor.minimap.enabled"' 'false'
+    ok "Minimap: Desactivado"
+
+    # Smooth scrolling
+    set_setting '."editor.smoothScrolling"' 'true'
+    set_setting '."workbench.list.smoothScrolling"' 'true'
+    ok "Smooth Scrolling: Activado"
+
+    # Sticky scroll (contexto de funciones)
+    set_setting '."editor.stickyScroll.enabled"' 'true'
+    ok "Sticky Scroll: Activado"
+
+    # Cursor blinking suave
+    set_setting '."editor.cursorBlinking"' '"smooth"'
+    set_setting '."editor.cursorSmoothCaretAnimation"' '"on"'
+    ok "Cursor Animation: Suave"
+
+    # Línea actual resaltada
+    set_setting '."editor.renderLineHighlight"' '"all"'
+    ok "Line Highlight: Activado"
+
+    # Whitespace
+    set_setting '."editor.renderWhitespace"' '"trailing"'
+    ok "Render Whitespace: Trailing only"
+
+    # Final newline
+    set_setting '."files.insertFinalNewline"' 'true'
+    set_setting '."files.trimTrailingWhitespace"' 'true'
+    ok "Final Newline + Trim Whitespace: Activado"
+
+    # Búsqueda mejorada
+    set_setting '."search.smartCase"' 'true'
+    ok "Smart Case Search: Activado"
+
+    # =========================================
+    # CRASH REPORTER (argv.json)
+    # =========================================
+
+    echo ""
+    info "Configurando Crash Reporter..."
+
+    # argv.json está en el directorio padre de User
+    local argv_file="$VSCODE_CONFIG_DIR/argv.json"
+    if [[ -f "$argv_file" ]]; then
+        local temp_file=$(mktemp)
+        jq '."enable-crash-reporter" = false' "$argv_file" > "$temp_file" 2>/dev/null && mv "$temp_file" "$argv_file"
+        ok "Crash Reporter: Desactivado (argv.json)"
+    else
+        # Crear argv.json si no existe
+        mkdir -p "$VSCODE_CONFIG_DIR"
+        echo '{"enable-crash-reporter": false}' > "$argv_file"
+        ok "Crash Reporter: Desactivado (argv.json creado)"
+    fi
+
+    echo ""
+    echo -e "${GREEN}${BOLD}Configuración aplicada${NC}"
+    echo ""
+    echo -e "${YELLOW}Nota:${NC} Reinicia VS Code para que los cambios tengan efecto."
+    echo ""
+    echo "Puedes ver la configuración actual con:"
+    echo "  vscode-config show"
+    echo ""
+}
+
+# ============================================================================
+# COMANDO: backup
+# ============================================================================
+
+cmd_backup() {
+    local backup_dir="$1"
+
+    if [[ -z "$backup_dir" ]]; then
+        error "Falta el directorio de destino.
+
+Uso: vscode-config backup <directorio>
+
+Ejemplo: vscode-config backup ~/vscode-backup"
+    fi
+
+    echo ""
+    echo -e "${BOLD}vscode-config backup${NC}"
+    echo ""
+
+    check_vscode_installed
+
+    # Crear directorio de backup
+    mkdir -p "$backup_dir"
+
+    info "Guardando backup en: $backup_dir"
+    echo ""
+
+    # Copiar settings.json
+    if [[ -f "$VSCODE_SETTINGS" ]]; then
+        cp "$VSCODE_SETTINGS" "$backup_dir/settings.json"
+        ok "settings.json"
+    else
+        warn "settings.json no existe"
+    fi
+
+    # Copiar keybindings.json
+    if [[ -f "$VSCODE_KEYBINDINGS" ]]; then
+        cp "$VSCODE_KEYBINDINGS" "$backup_dir/keybindings.json"
+        ok "keybindings.json"
+    else
+        warn "keybindings.json no existe"
+    fi
+
+    # Copiar snippets
+    if [[ -d "$VSCODE_USER_DIR/snippets" ]]; then
+        cp -r "$VSCODE_USER_DIR/snippets" "$backup_dir/"
+        ok "snippets/"
+    fi
+
+    # Copiar argv.json (crash reporter settings)
+    local argv_file="$VSCODE_CONFIG_DIR/argv.json"
+    if [[ -f "$argv_file" ]]; then
+        cp "$argv_file" "$backup_dir/argv.json"
+        ok "argv.json"
+    fi
+
+    # Guardar lista de extensiones
+    if command -v code &> /dev/null; then
+        code --list-extensions > "$backup_dir/extensions.txt" 2>/dev/null || true
+        if [[ -s "$backup_dir/extensions.txt" ]]; then
+            ok "extensions.txt ($(wc -l < "$backup_dir/extensions.txt") extensiones)"
+        fi
+    else
+        warn "No se pudo listar extensiones (comando 'code' no disponible)"
+    fi
+
+    # Crear info del backup
+    cat > "$backup_dir/backup-info.txt" << EOF
+VS Code Config Backup
+=====================
+Fecha: $(date)
+Host: $(hostname)
+Usuario: $USER
+VS Code Config Dir: $VSCODE_CONFIG_DIR
+
+Contenido:
+- settings.json: Configuración principal
+- keybindings.json: Atajos de teclado
+- snippets/: Snippets personalizados
+- argv.json: Argumentos de runtime (crash reporter)
+- extensions.txt: Lista de extensiones
+
+Para restaurar:
+  vscode-config restore $backup_dir
+EOF
+
+    echo ""
+    echo -e "${GREEN}${BOLD}Backup completado${NC}"
+    echo ""
+    echo "Archivos guardados en: $backup_dir"
+    echo ""
+}
+
+# ============================================================================
+# COMANDO: restore
+# ============================================================================
+
+cmd_restore() {
+    local backup_dir="$1"
+
+    if [[ -z "$backup_dir" ]]; then
+        error "Falta el directorio de backup.
+
+Uso: vscode-config restore <directorio>
+
+Ejemplo: vscode-config restore ~/vscode-backup"
+    fi
+
+    if [[ ! -d "$backup_dir" ]]; then
+        error "No existe el directorio: $backup_dir"
+    fi
+
+    echo ""
+    echo -e "${BOLD}vscode-config restore${NC}"
+    echo ""
+
+    check_vscode_installed
+
+    warn "Esto sobrescribirá tu configuración actual de VS Code."
+    echo ""
+    echo "Se restaurará desde: $backup_dir"
+    echo ""
+
+    # Mostrar qué se va a restaurar
+    echo "Archivos a restaurar:"
+    [[ -f "$backup_dir/settings.json" ]] && echo "  - settings.json"
+    [[ -f "$backup_dir/keybindings.json" ]] && echo "  - keybindings.json"
+    [[ -d "$backup_dir/snippets" ]] && echo "  - snippets/"
+    [[ -f "$backup_dir/argv.json" ]] && echo "  - argv.json"
+    [[ -f "$backup_dir/extensions.txt" ]] && echo "  - extensions.txt ($(wc -l < "$backup_dir/extensions.txt") extensiones)"
+    echo ""
+
+    read -p "¿Continuar? [y/N] " -n 1 -r
+    echo ""
+
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        echo "Cancelado."
+        exit 0
+    fi
+
+    echo ""
+    info "Restaurando..."
+
+    # Crear directorios si no existen
+    mkdir -p "$VSCODE_USER_DIR"
+
+    # Restaurar settings.json
+    if [[ -f "$backup_dir/settings.json" ]]; then
+        cp "$backup_dir/settings.json" "$VSCODE_SETTINGS"
+        ok "settings.json"
+    fi
+
+    # Restaurar keybindings.json
+    if [[ -f "$backup_dir/keybindings.json" ]]; then
+        cp "$backup_dir/keybindings.json" "$VSCODE_KEYBINDINGS"
+        ok "keybindings.json"
+    fi
+
+    # Restaurar snippets
+    if [[ -d "$backup_dir/snippets" ]]; then
+        cp -r "$backup_dir/snippets" "$VSCODE_USER_DIR/"
+        ok "snippets/"
+    fi
+
+    # Restaurar argv.json
+    if [[ -f "$backup_dir/argv.json" ]]; then
+        cp "$backup_dir/argv.json" "$VSCODE_CONFIG_DIR/argv.json"
+        ok "argv.json"
+    fi
+
+    # Preguntar si restaurar extensiones
+    if [[ -f "$backup_dir/extensions.txt" ]]; then
+        echo ""
+        read -p "¿Instalar extensiones desde backup? [y/N] " -n 1 -r
+        echo ""
+
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            info "Instalando extensiones..."
+            while IFS= read -r extension; do
+                if [[ -n "$extension" ]]; then
+                    code --install-extension "$extension" 2>/dev/null && ok "$extension" || warn "Fallo: $extension"
+                fi
+            done < "$backup_dir/extensions.txt"
+        fi
+    fi
+
+    echo ""
+    echo -e "${GREEN}${BOLD}Restauración completada${NC}"
+    echo ""
+    echo -e "${YELLOW}Nota:${NC} Reinicia VS Code para que los cambios tengan efecto."
+    echo ""
+}
+
+# ============================================================================
+# COMANDO: show
+# ============================================================================
+
+cmd_show() {
+    echo ""
+    echo -e "${BOLD}vscode-config show${NC}"
+    echo ""
+
+    check_jq
+
+    echo -e "${BLUE}Directorios:${NC}"
+    echo "  Config: $VSCODE_CONFIG_DIR"
+    echo "  User: $VSCODE_USER_DIR"
+    echo "  Extensions: $VSCODE_EXTENSIONS_DIR"
+    echo ""
+
+    if [[ -f "$VSCODE_SETTINGS" ]]; then
+        echo -e "${BLUE}Configuración actual (settings.json):${NC}"
+        echo ""
+
+        # Privacidad
+        echo "  Privacidad:"
+        echo "    Telemetry Level: $(get_setting '."telemetry.telemetryLevel"')"
+        echo "    Enable Telemetry: $(get_setting '."telemetry.enableTelemetry"')"
+        echo "    Experiments: $(get_setting '."workbench.enableExperiments"')"
+        echo "    Natural Language Search: $(get_setting '."workbench.settings.enableNaturalLanguageSearch"')"
+        echo ""
+
+        # Seguridad
+        echo "  Seguridad:"
+        echo "    Workspace Trust: $(get_setting '."security.workspace.trust.enabled"')"
+        echo "    Untrusted Files: $(get_setting '."security.workspace.trust.untrustedFiles"')"
+        echo "    Git Autofetch: $(get_setting '."git.autofetch"')"
+        echo ""
+
+        # Productividad
+        echo "  Productividad:"
+        echo "    Auto Save: $(get_setting '."files.autoSave"')"
+        echo "    Format On Save: $(get_setting '."editor.formatOnSave"')"
+        echo "    Bracket Pair Colorization: $(get_setting '."editor.bracketPairColorization.enabled"')"
+        echo "    Sticky Scroll: $(get_setting '."editor.stickyScroll.enabled"')"
+        echo "    Minimap: $(get_setting '."editor.minimap.enabled"')"
+        echo ""
+    else
+        warn "No existe settings.json"
+    fi
+
+    # Crash Reporter (argv.json)
+    local argv_file="$VSCODE_CONFIG_DIR/argv.json"
+    if [[ -f "$argv_file" ]]; then
+        local crash_reporter=$(jq '."enable-crash-reporter"' "$argv_file" 2>/dev/null)
+        echo "  Runtime (argv.json):"
+        echo "    Crash Reporter: $crash_reporter"
+        echo ""
+    fi
+
+    # Extensiones instaladas
+    if command -v code &> /dev/null; then
+        local ext_count=$(code --list-extensions 2>/dev/null | wc -l)
+        echo -e "${BLUE}Extensiones instaladas:${NC} $ext_count"
+        echo "  (usa 'vscode-config extensions list' para ver todas)"
+        echo ""
+    fi
+}
+
+# ============================================================================
+# COMANDO: extensions
+# ============================================================================
+
+cmd_extensions() {
+    local subcmd="$1"
+    local arg="$2"
+
+    case "$subcmd" in
+        list)
+            echo ""
+            echo -e "${BOLD}Extensiones instaladas:${NC}"
+            echo ""
+            if command -v code &> /dev/null; then
+                code --list-extensions 2>/dev/null || warn "No se pudo listar extensiones"
+            else
+                error "Comando 'code' no disponible en PATH
+
+Asegúrate de que VS Code está instalado y el comando 'code' está en tu PATH.
+Puedes añadirlo desde VS Code: Cmd/Ctrl+Shift+P → 'Shell Command: Install code command in PATH'"
+            fi
+            echo ""
+            ;;
+        backup)
+            if [[ -z "$arg" ]]; then
+                error "Falta el archivo de destino.
+
+Uso: vscode-config extensions backup <archivo>"
+            fi
+            if command -v code &> /dev/null; then
+                code --list-extensions > "$arg" 2>/dev/null
+                ok "Extensiones guardadas en: $arg"
+            else
+                error "Comando 'code' no disponible en PATH"
+            fi
+            ;;
+        restore)
+            if [[ -z "$arg" ]]; then
+                error "Falta el archivo con la lista.
+
+Uso: vscode-config extensions restore <archivo>"
+            fi
+            if [[ ! -f "$arg" ]]; then
+                error "No existe el archivo: $arg"
+            fi
+            if ! command -v code &> /dev/null; then
+                error "Comando 'code' no disponible en PATH"
+            fi
+
+            echo ""
+            info "Instalando extensiones desde: $arg"
+            echo ""
+            while IFS= read -r extension; do
+                if [[ -n "$extension" ]]; then
+                    code --install-extension "$extension" 2>/dev/null && ok "$extension" || warn "Fallo: $extension"
+                fi
+            done < "$arg"
+            echo ""
+            ;;
+        *)
+            error "Subcomando desconocido: $subcmd
+
+Uso:
+  vscode-config extensions list
+  vscode-config extensions backup <archivo>
+  vscode-config extensions restore <archivo>"
+            ;;
+    esac
+}
+
+# ============================================================================
+# MAIN
+# ============================================================================
+
+if [[ $# -eq 0 ]]; then
+    show_help
+fi
+
+case "$1" in
+    setup)
+        cmd_setup
+        ;;
+    backup)
+        cmd_backup "$2"
+        ;;
+    restore)
+        cmd_restore "$2"
+        ;;
+    show)
+        cmd_show
+        ;;
+    extensions)
+        cmd_extensions "$2" "$3"
+        ;;
+    --help|-h)
+        show_help
+        ;;
+    *)
+        error "Comando desconocido: $1
+
+Usa 'vscode-config --help' para ver comandos disponibles."
+        ;;
+esac
