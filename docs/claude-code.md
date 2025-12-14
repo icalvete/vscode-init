@@ -131,34 +131,23 @@ vscode-config claude-code status
 
 ### Abrir Claude Code en VS Code
 
-1. **Icono Spark (✦)** - Click en la barra lateral izquierda
-2. **Paleta de comandos** - `Ctrl+Shift+P` → "Claude Code: Open"
+1. Abre la paleta de comandos: `Ctrl+Shift+P`
+2. Escribe: `Claude Code: Open`
+3. Pulsa Enter
 
-<!-- TODO: captura 02-icono-spark-sidebar.png - Icono ✦ en la barra lateral -->
+![Icono de Claude en la barra lateral](../assets/01-panel-claude-code-inicio.png)
 
 ### Panel de Claude Code
 
-Al abrir, verás el panel de Claude Code listo para empezar:
+Al abrirse, verás el panel listo para empezar:
 
-![Panel de inicio de Claude Code](../assets/01-panel-claude-code-inicio.png)
+![Panel de Claude Code abierto](../assets/02-panel-claude-code-inicio.png)
 
-- **Build with agent mode**: Claude está listo para trabajar de forma autónoma
-- **Build Workspace**: Analiza todo el proyecto
-- **Show Config**: Abre configuración
+### Primera interacción
 
-```
-┌─────────────────────────────────────┐
-│  ✦ Claude Code                      │
-├─────────────────────────────────────┤
-│                                     │
-│  [Historial de conversación]        │
-│                                     │
-├─────────────────────────────────────┤
-│  > Escribe tu mensaje...        ⚙️  │
-│                                     │
-│  [Extended thinking: OFF]           │
-└─────────────────────────────────────┘
-```
+Escribe tu primera pregunta y Claude leerá automáticamente `CLAUDE.md` para entender el contexto del proyecto:
+
+![Claude ha leído CLAUDE.md](../assets/03-panel-claude-code-inicio.png)
 
 ### Flujo de trabajo básico
 

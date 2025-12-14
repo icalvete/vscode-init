@@ -41,26 +41,25 @@ cd examples/sinatra-api
 code .
 ```
 
-### Localizar el panel de Claude Code
+### Abrir el panel de Claude Code
 
-1. Mira la **barra lateral izquierda**
-2. Busca el icono **✦** (Spark) - suele estar abajo
-3. Haz clic para abrir el panel
+1. Abre la paleta de comandos: `Ctrl+Shift+P`
+2. Escribe: `Claude Code: Open`
+3. Pulsa Enter
 
-![Panel de inicio de Claude Code](../../assets/01-panel-claude-code-inicio.png)
+![Icono de Claude en la barra lateral](../../assets/01-panel-claude-code-inicio.png)
+
+### Primera vista del panel
+
+Al abrirse, verás el panel listo para empezar:
+
+![Panel de Claude Code abierto](../../assets/02-panel-claude-code-inicio.png)
 
 ### Primera interacción
 
-Al abrir, Claude Code lee automáticamente `CLAUDE.md`. Verás algo como:
+Escribe tu primera pregunta (por ejemplo "Empezamos?") y Claude leerá automáticamente `CLAUDE.md` para entender el contexto del proyecto:
 
-```
-Claude Code
-───────────────────────────
-Hola! He leído el archivo CLAUDE.md de tu proyecto.
-Es una API de tareas con Sinatra. ¿En qué puedo ayudarte?
-
-> _
-```
+![Claude ha leído CLAUDE.md](../../assets/03-panel-claude-code-inicio.png)
 
 ---
 
