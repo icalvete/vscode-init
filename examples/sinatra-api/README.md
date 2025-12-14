@@ -47,13 +47,7 @@ code .
 2. Busca el icono **✦** (Spark) - suele estar abajo
 3. Haz clic para abrir el panel
 
-```
-┌─────────────────────────────────────────────────┐
-│  Explorador  │  Buscar  │  Git  │  ✦ Claude    │
-└─────────────────────────────────────────────────┘
-                                    ↑
-                              Haz clic aquí
-```
+![Panel de inicio de Claude Code](../../assets/01-panel-claude-code-inicio.png)
 
 ### Primera interacción
 
