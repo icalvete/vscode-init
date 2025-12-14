@@ -1,6 +1,21 @@
-# vscode-init
+<p align="center">
+  <img src="assets/vscode-logo.png" alt="VS Code Logo" width="128">
+</p>
 
-Herramienta para configurar Visual Studio Code con opciones seguras y productivas.
+<h1 align="center">vscode-init</h1>
+
+<p align="center">
+  Herramienta para configurar Visual Studio Code con opciones seguras y productivas.
+</p>
+
+<p align="center">
+  <a href="#instalación">Instalación</a> •
+  <a href="#uso">Uso</a> •
+  <a href="#qué-configura-vscode-config-setup">Configuración</a> •
+  <a href="#licencia">Licencia</a>
+</p>
+
+---
 
 ## Instalación
 
