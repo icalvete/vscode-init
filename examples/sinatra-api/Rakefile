@@ -1,0 +1,54 @@
+# frozen_string_literal: true
+
+require 'rake'
+require 'sequel'
+
+namespace :db do
+  desc 'Create database'
+  task :create do
+    require_relative 'config/database'
+    puts 'Database ready'
+  end
+
+  desc 'Run migrations'
+  task :migrate do
+    require_relative 'config/database'
+    Sequel.extension :migration
+    Sequel::Migrator.run(DB, 'db/migrations')
+    puts 'Migrations completed'
+  end
+
+  desc 'Rollback last migration'
+  task :rollback do
+    require_relative 'config/database'
+    Sequel.extension :migration
+    Sequel::Migrator.run(DB, 'db/migrations', target: 0)
+    puts 'Rollback completed'
+  end
+
+  desc 'Reset database'
+  task reset: %i[rollback migrate]
+
+  desc 'Seed database with sample data'
+  task :seed do
+    require_relative 'config/database'
+    require_relative 'lib/models/task'
+
+    Task.create(title: 'Comprar leche', priority: 2)
+    Task.create(title: 'Revisar correos', priority: 3, completed: true)
+    Task.create(title: 'Llamar al médico', priority: 1, due_date: Date.today + 2)
+    Task.create(title: 'Preparar presentación', priority: 2, description: 'Para la reunión del lunes')
+    Task.create(title: 'Ejercicio', priority: 4, due_date: Date.today)
+
+    puts 'Seed data created'
+  end
+end
+
+# RSpec tasks
+begin
+  require 'rspec/core/rake_task'
+  RSpec::Core::RakeTask.new(:spec)
+  task default: :spec
+rescue LoadError
+  # RSpec not available
+end

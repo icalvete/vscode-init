@@ -88,6 +88,8 @@ COMANDOS
     extensions list     Lista extensiones instaladas
     extensions backup <file>    Guarda lista de extensiones
     extensions restore <file>   Instala extensiones desde lista
+    claude-code setup   Configura VS Code para Claude Code (extensiones + settings)
+    claude-code status  Verifica instalación de Claude Code
 
 OPCIONES
     --help, -h          Muestra esta ayuda
@@ -104,6 +106,9 @@ EJEMPLOS
 
     vscode-config extensions list
         Muestra extensiones instaladas
+
+    vscode-config claude-code setup
+        Instala extensión Claude Code y extensiones complementarias
 
 CONFIGURACIÓN RECOMENDADA (setup)
     Privacidad:
@@ -122,6 +127,17 @@ CONFIGURACIÓN RECOMENDADA (setup)
     - Format On Save: Activado
     - Bracket Pair Colorization: Activado
     - Smooth Scrolling: Activado
+
+CLAUDE CODE
+    La opción 'claude-code setup' instala:
+    - anthropic.claude-code (extensión oficial - obligatoria)
+    - eamodio.gitlens (visualización de diffs mejorada)
+    - yzhang.markdown-all-in-one (soporte Markdown para CLAUDE.md)
+    - usernamehw.errorlens (errores inline)
+
+    Requisitos:
+    - Claude Code CLI instalado (curl -fsSL https://claude.ai/install.sh | bash)
+    - Cuenta Claude Pro/Max o API key de Anthropic
 
 ARCHIVOS
     ~/.config/Code/User/settings.json     Configuración principal (Linux)
@@ -734,6 +750,246 @@ Uso:
 }
 
 # ============================================================================
+# COMANDO: claude-code
+# ============================================================================
+
+# Extensiones para Claude Code
+CLAUDE_CODE_EXTENSIONS=(
+    "anthropic.claude-code"           # Extensión oficial (obligatoria)
+)
+
+CLAUDE_CODE_EXTENSIONS_OPTIONAL=(
+    "eamodio.gitlens"                 # Visualización de diffs mejorada
+    "yzhang.markdown-all-in-one"      # Soporte Markdown para CLAUDE.md
+    "usernamehw.errorlens"            # Errores inline en el editor
+    "streetsidesoftware.code-spell-checker"  # Corrector ortográfico
+)
+
+cmd_claude_code() {
+    local subcmd="$1"
+
+    case "$subcmd" in
+        setup)
+            cmd_claude_code_setup
+            ;;
+        status)
+            cmd_claude_code_status
+            ;;
+        *)
+            error "Subcomando desconocido: $subcmd
+
+Uso:
+  vscode-config claude-code setup    Instala extensiones y configura settings
+  vscode-config claude-code status   Verifica instalación"
+            ;;
+    esac
+}
+
+cmd_claude_code_setup() {
+    echo ""
+    echo -e "${BOLD}vscode-config claude-code setup${NC}"
+    echo ""
+
+    check_jq
+
+    # Verificar que VS Code está disponible
+    if ! command -v code &> /dev/null; then
+        error "Comando 'code' no disponible en PATH
+
+Asegúrate de que VS Code está instalado y el comando 'code' está en tu PATH.
+Puedes añadirlo desde VS Code: Cmd/Ctrl+Shift+P → 'Shell Command: Install code command in PATH'"
+    fi
+
+    # Verificar Claude Code CLI
+    echo -e "${BLUE}Verificando requisitos...${NC}"
+    echo ""
+
+    if command -v claude &> /dev/null; then
+        local claude_version=$(claude --version 2>/dev/null || echo "desconocida")
+        ok "Claude Code CLI instalado: $claude_version"
+    else
+        warn "Claude Code CLI no encontrado"
+        echo ""
+        echo "  Para instalar Claude Code CLI:"
+        echo "    curl -fsSL https://claude.ai/install.sh | bash"
+        echo ""
+        read -p "¿Continuar de todas formas? [y/N] " -n 1 -r
+        echo ""
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            echo "Cancelado."
+            exit 0
+        fi
+    fi
+
+    echo ""
+    echo "Se instalará:"
+    echo ""
+    echo -e "  ${BLUE}Extensión obligatoria:${NC}"
+    for ext in "${CLAUDE_CODE_EXTENSIONS[@]}"; do
+        echo "    - $ext"
+    done
+    echo ""
+    echo -e "  ${BLUE}Extensiones complementarias (opcional):${NC}"
+    for ext in "${CLAUDE_CODE_EXTENSIONS_OPTIONAL[@]}"; do
+        echo "    - $ext"
+    done
+    echo ""
+
+    read -p "¿Instalar extensión obligatoria? [Y/n] " -n 1 -r
+    echo ""
+
+    if [[ $REPLY =~ ^[Nn]$ ]]; then
+        echo "Cancelado."
+        exit 0
+    fi
+
+    echo ""
+    info "Instalando extensión Claude Code..."
+
+    # Instalar extensión obligatoria
+    for ext in "${CLAUDE_CODE_EXTENSIONS[@]}"; do
+        if code --install-extension "$ext" 2>/dev/null; then
+            ok "$ext"
+        else
+            error "No se pudo instalar $ext"
+        fi
+    done
+
+    # Preguntar por extensiones opcionales
+    echo ""
+    read -p "¿Instalar extensiones complementarias? [Y/n] " -n 1 -r
+    echo ""
+
+    if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+        echo ""
+        info "Instalando extensiones complementarias..."
+        for ext in "${CLAUDE_CODE_EXTENSIONS_OPTIONAL[@]}"; do
+            if code --install-extension "$ext" 2>/dev/null; then
+                ok "$ext"
+            else
+                warn "No se pudo instalar $ext (puede que ya esté instalada)"
+            fi
+        done
+    fi
+
+    # Aplicar settings recomendados para Claude Code
+    echo ""
+    read -p "¿Aplicar settings recomendados para Claude Code? [Y/n] " -n 1 -r
+    echo ""
+
+    if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+        echo ""
+        info "Aplicando settings para Claude Code..."
+
+        # Crear settings.json si no existe
+        if [[ ! -f "$VSCODE_SETTINGS" ]]; then
+            mkdir -p "$VSCODE_USER_DIR"
+            echo '{}' > "$VSCODE_SETTINGS"
+        fi
+
+        # Settings para mejor experiencia con Claude Code
+        set_setting '."editor.wordWrap"' '"on"'
+        ok "Word Wrap: on (mejor visualización de respuestas largas)"
+
+        set_setting '."editor.formatOnPaste"' 'true'
+        ok "Format On Paste: true"
+
+        set_setting '."markdown.preview.breaks"' 'true'
+        ok "Markdown Preview Breaks: true"
+
+        # Desactivar prompt de login si se usa API key
+        # set_setting '."claudeCode.disableLoginPrompt"' 'false'
+        # ok "Claude Code Login Prompt: habilitado"
+
+        # GitLens: desactivar telemetría si se instaló
+        set_setting '."gitlens.telemetry.enabled"' 'false'
+        ok "GitLens Telemetry: desactivada"
+
+        # ErrorLens: configuración recomendada
+        set_setting '."errorLens.gutterIconsEnabled"' 'true'
+        set_setting '."errorLens.messageEnabled"' 'true'
+        ok "ErrorLens: configurado"
+    fi
+
+    echo ""
+    echo -e "${GREEN}${BOLD}Claude Code configurado${NC}"
+    echo ""
+    echo "Próximos pasos:"
+    echo "  1. Reinicia VS Code"
+    echo "  2. Haz clic en el icono Spark (✦) en la barra lateral"
+    echo "  3. Inicia sesión con tu cuenta Claude Pro/Max o API key"
+    echo ""
+    echo "Documentación: https://github.com/icalvete/vscode-init/blob/main/docs/claude-code.md"
+    echo ""
+}
+
+cmd_claude_code_status() {
+    echo ""
+    echo -e "${BOLD}vscode-config claude-code status${NC}"
+    echo ""
+
+    echo -e "${BLUE}Claude Code CLI:${NC}"
+    if command -v claude &> /dev/null; then
+        local claude_version=$(claude --version 2>/dev/null || echo "error obteniendo versión")
+        ok "Instalado: $claude_version"
+
+        # Verificar autenticación
+        if claude auth status &>/dev/null; then
+            ok "Autenticado"
+        else
+            warn "No autenticado (ejecuta: claude login)"
+        fi
+    else
+        warn "No instalado"
+        echo "  Instalar: curl -fsSL https://claude.ai/install.sh | bash"
+    fi
+    echo ""
+
+    echo -e "${BLUE}Extensión VS Code:${NC}"
+    if command -v code &> /dev/null; then
+        local installed=$(code --list-extensions 2>/dev/null | grep -i "anthropic.claude-code" || true)
+        if [[ -n "$installed" ]]; then
+            ok "anthropic.claude-code instalada"
+        else
+            warn "anthropic.claude-code NO instalada"
+            echo "  Instalar: vscode-config claude-code setup"
+        fi
+    else
+        warn "Comando 'code' no disponible"
+    fi
+    echo ""
+
+    echo -e "${BLUE}Extensiones complementarias:${NC}"
+    if command -v code &> /dev/null; then
+        local extensions=$(code --list-extensions 2>/dev/null)
+        for ext in "${CLAUDE_CODE_EXTENSIONS_OPTIONAL[@]}"; do
+            if echo "$extensions" | grep -qi "$ext"; then
+                ok "$ext"
+            else
+                echo "  - $ext (no instalada)"
+            fi
+        done
+    fi
+    echo ""
+
+    echo -e "${BLUE}Requisitos del sistema:${NC}"
+    # Node.js
+    if command -v node &> /dev/null; then
+        local node_version=$(node --version 2>/dev/null)
+        ok "Node.js: $node_version"
+    else
+        warn "Node.js no encontrado (requerido >= 18)"
+    fi
+
+    # VS Code version
+    if command -v code &> /dev/null; then
+        local vscode_version=$(code --version 2>/dev/null | head -1)
+        ok "VS Code: $vscode_version"
+    fi
+    echo ""
+}
+
+# ============================================================================
 # MAIN
 # ============================================================================
 
@@ -756,6 +1012,9 @@ case "$1" in
         ;;
     extensions)
         cmd_extensions "$2" "$3"
+        ;;
+    claude-code)
+        cmd_claude_code "$2"
         ;;
     --help|-h)
         show_help

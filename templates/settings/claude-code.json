@@ -1,0 +1,94 @@
+{
+  // ============================================================
+  // Settings recomendados para Claude Code en VS Code
+  // ============================================================
+  // Copia estos settings a tu ~/.config/Code/User/settings.json
+  // o usa: vscode-config claude-code setup
+  // ============================================================
+
+  // ---------------------------------------------------------
+  // Editor: Mejor experiencia con respuestas de Claude
+  // ---------------------------------------------------------
+  "editor.wordWrap": "on",
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": "active",
+  "editor.stickyScroll.enabled": true,
+  "editor.renderLineHighlight": "all",
+
+  // ---------------------------------------------------------
+  // Markdown: Para CLAUDE.md y documentación
+  // ---------------------------------------------------------
+  "markdown.preview.breaks": true,
+  "[markdown]": {
+    "editor.wordWrap": "on",
+    "editor.quickSuggestions": {
+      "other": true,
+      "comments": false,
+      "strings": false
+    }
+  },
+
+  // ---------------------------------------------------------
+  // Files: Auto-guardado y limpieza
+  // ---------------------------------------------------------
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 1000,
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+
+  // ---------------------------------------------------------
+  // Git: Configuración para mejor integración
+  // ---------------------------------------------------------
+  "git.autofetch": false,
+  "git.confirmSync": true,
+  "git.enableSmartCommit": true,
+
+  // ---------------------------------------------------------
+  // Terminal: Para Claude Code CLI
+  // ---------------------------------------------------------
+  "terminal.integrated.defaultProfile.linux": "bash",
+  "terminal.integrated.scrollback": 10000,
+  "terminal.integrated.enablePersistentSessions": false,
+
+  // ---------------------------------------------------------
+  // Claude Code Extension (si aplica)
+  // ---------------------------------------------------------
+  // "claudeCode.disableLoginPrompt": false,
+
+  // ---------------------------------------------------------
+  // Extensiones complementarias
+  // ---------------------------------------------------------
+
+  // GitLens - Desactivar telemetría
+  "gitlens.telemetry.enabled": false,
+  "gitlens.currentLine.enabled": true,
+  "gitlens.hovers.currentLine.over": "line",
+
+  // ErrorLens - Mostrar errores inline
+  "errorLens.gutterIconsEnabled": true,
+  "errorLens.messageEnabled": true,
+  "errorLens.statusBarIconsEnabled": true,
+
+  // Spell Checker - Para documentación
+  "cSpell.language": "en,es",
+  "cSpell.enableFiletypes": [
+    "markdown",
+    "plaintext"
+  ],
+
+  // ---------------------------------------------------------
+  // Seguridad: Workspace Trust
+  // ---------------------------------------------------------
+  "security.workspace.trust.enabled": true,
+  "security.workspace.trust.untrustedFiles": "prompt",
+
+  // ---------------------------------------------------------
+  // Privacidad: Telemetría desactivada
+  // ---------------------------------------------------------
+  "telemetry.telemetryLevel": "off",
+  "telemetry.enableTelemetry": false,
+  "workbench.enableExperiments": false,
+  "workbench.settings.enableNaturalLanguageSearch": false
+}

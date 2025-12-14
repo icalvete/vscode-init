@@ -11,6 +11,7 @@
 <p align="center">
   <a href="#instalación">Instalación</a> •
   <a href="#uso">Uso</a> •
+  <a href="#claude-code">Claude Code</a> •
   <a href="#qué-configura-vscode-config-setup">Configuración</a> •
   <a href="#licencia">Licencia</a>
 </p>
@@ -67,7 +68,58 @@ vscode-config restore ~/vscode-backup
 vscode-config extensions list
 vscode-config extensions backup ~/extensions.txt
 vscode-config extensions restore ~/extensions.txt
+
+# Claude Code
+vscode-config claude-code setup    # Instalar y configurar
+vscode-config claude-code status   # Verificar instalación
 ```
+
+## Claude Code
+
+Soporte integrado para [Claude Code](https://docs.anthropic.com/claude-code), el asistente de programación de Anthropic.
+
+### Instalación rápida
+
+```bash
+# Instalar Claude Code CLI
+curl -fsSL https://claude.ai/install.sh | bash
+
+# Configurar VS Code para Claude Code
+vscode-config claude-code setup
+```
+
+### ¿Qué instala?
+
+| Extensión | Descripción |
+|-----------|-------------|
+| `anthropic.claude-code` | Extensión oficial (obligatoria) |
+| `eamodio.gitlens` | Visualización de diffs mejorada |
+| `yzhang.markdown-all-in-one` | Soporte Markdown para CLAUDE.md |
+| `usernamehw.errorlens` | Errores inline en el editor |
+| `streetsidesoftware.code-spell-checker` | Corrector ortográfico |
+
+### Verificar estado
+
+```bash
+vscode-config claude-code status
+```
+
+Muestra:
+- Estado del CLI (instalado/versión)
+- Estado de autenticación
+- Extensiones instaladas
+- Requisitos del sistema
+
+### Documentación
+
+- **[Guía completa de Claude Code](docs/claude-code.md)** - Instalación, configuración, comandos
+- **[Ejemplo: Sinatra API](examples/sinatra-api/)** - Tutorial paso a paso
+
+### Requisitos
+
+- Node.js 18+
+- VS Code 1.98.0+
+- Cuenta Claude Pro/Max o API key de Anthropic
 
 ## ¿Qué configura `vscode-config setup`?
 
@@ -117,12 +169,18 @@ vscode-config extensions restore ~/extensions.txt
 ```
 vscode-init/
 ├── bin/
-│   └── vscode-config     # Script principal
+│   └── vscode-config           # Script principal
 ├── templates/
-│   └── settings/         # Templates de configuración (futuro)
-├── docs/                  # Documentación adicional
-├── LICENSE               # MIT
-├── Makefile              # Instalación
+│   └── settings/
+│       └── claude-code.json    # Settings para Claude Code
+├── docs/
+│   └── claude-code.md          # Guía de Claude Code
+├── examples/
+│   └── sinatra-api/            # Proyecto de ejemplo
+├── assets/
+│   └── vscode-logo.png         # Logo
+├── LICENSE                     # MIT
+├── Makefile                    # Instalación
 └── README.md
 ```
 
@@ -132,11 +190,12 @@ Este proyecto es hermano de [cursor-init](https://github.com/icalvete/cursor-ini
 
 | Característica | cursor-init | vscode-init |
 |----------------|-------------|-------------|
-| Agent Mode / MCP | Sí | No (VS Code no lo tiene) |
-| Rules por proyecto | Sí | No |
+| Agent Mode / MCP | Sí (nativo) | Sí (via Claude Code) |
+| Rules por proyecto | Sí (.cursor/rules/) | Sí (CLAUDE.md) |
 | Telemetría | Cursor telemetry | Microsoft telemetry |
 | Backup/Restore | Sí | Sí |
 | Extensiones | Sí | Sí |
+| Claude Code | No | Sí |
 
 ## Rutas de configuración
 
