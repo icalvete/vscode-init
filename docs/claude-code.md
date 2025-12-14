@@ -134,7 +134,17 @@ vscode-config claude-code status
 1. **Icono Spark (✦)** - Click en la barra lateral izquierda
 2. **Paleta de comandos** - `Ctrl+Shift+P` → "Claude Code: Open"
 
+<!-- TODO: captura 02-icono-spark-sidebar.png - Icono ✦ en la barra lateral -->
+
 ### Panel de Claude Code
+
+Al abrir, verás el panel de Claude Code listo para empezar:
+
+![Panel de inicio de Claude Code](../assets/01-panel-claude-code-inicio.png)
+
+- **Build with agent mode**: Claude está listo para trabajar de forma autónoma
+- **Build Workspace**: Analiza todo el proyecto
+- **Show Config**: Abre configuración
 
 ```
 ┌─────────────────────────────────────┐
@@ -158,6 +168,8 @@ vscode-config claude-code status
 4. **Revisa los cambios** propuestos (diffs)
 5. **Acepta o rechaza** los cambios
 
+<!-- TODO: captura 03-diff-aceptar-rechazar.png - Diff con botones Accept/Reject -->
+
 ### Mencionar archivos
 
 Usa `@` para referenciar archivos:
@@ -165,6 +177,8 @@ Usa `@` para referenciar archivos:
 ```
 @src/app.js ¿Puedes añadir validación de entrada?
 ```
+
+<!-- TODO: captura 04-at-mention-autocompletado.png - Autocompletado de archivos con @ -->
 
 ### Adjuntar archivos/imágenes
 
@@ -177,6 +191,8 @@ Usa `@` para referenciar archivos:
 ## Comandos slash
 
 Los comandos slash te permiten acceder a funcionalidades avanzadas:
+
+<!-- TODO: captura 05-menu-slash-commands.png - Menú desplegable de comandos slash -->
 
 ### Configuración
 
@@ -346,6 +362,8 @@ Usa Plan Mode para revisar cambios antes de aplicarlos:
 - Claude propone un plan
 - Tú lo revisas y editas
 - Luego se ejecuta
+
+<!-- TODO: captura 06-plan-mode.png - Claude proponiendo un plan de cambios -->
 
 Cambiar modo: `Shift+Tab` o desde settings
 

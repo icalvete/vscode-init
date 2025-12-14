@@ -11,88 +11,191 @@
 
 ---
 
+## ¿Qué hace?
+
+**vscode-config** es un script que configura VS Code de forma segura y productiva:
+
+- **Desactiva telemetría** de VS Code y extensiones populares (RedHat, GitLens, AWS...)
+- **Activa protecciones** como Workspace Trust y confirmaciones de git
+- **Mejora productividad** con auto-save, format on save, sticky scroll, bracket colors
+- **Instala Claude Code** con extensiones complementarias
+
+Todo esto ejecutando un solo comando: `vscode-config setup`
+
+---
+
 ## Instalación
 
 ```bash
-# Requisito: jq
-sudo apt install jq  # Ubuntu/Debian
-brew install jq      # macOS
+# 1. Instalar dependencia
+sudo apt install jq      # Ubuntu/Debian
+brew install jq          # macOS
 
-# Instalar vscode-config
+# 2. Clonar e instalar
 git clone https://github.com/icalvete/vscode-init.git
 cd vscode-init
 sudo make install
+
+# O sin sudo (instala en ~/.local/bin)
+make install PREFIX=~/.local
 ```
 
-## Uso rápido
+---
+
+## Uso
+
+### Configuración básica
 
 ```bash
-# Configurar VS Code (privacidad + productividad)
+# Aplicar configuración recomendada (privacidad + productividad)
 vscode-config setup
 
-# Ver qué está configurado
+# Ver qué está configurado actualmente
 vscode-config show
+```
 
-# Backup / Restore
+### Backup y restore
+
+```bash
+# Guardar configuración actual
 vscode-config backup ~/vscode-backup
+
+# Restaurar (settings, keybindings, snippets, extensiones)
 vscode-config restore ~/vscode-backup
 ```
 
-### ¿Qué hace `setup`?
+### Extensiones
 
-- **Privacidad**: Desactiva telemetría de VS Code y extensiones populares
-- **Seguridad**: Activa Workspace Trust, desactiva git autofetch
-- **Productividad**: Auto-save, format on save, bracket colorization, sticky scroll
+```bash
+# Ver extensiones instaladas
+vscode-config extensions list
+
+# Exportar lista
+vscode-config extensions backup ~/mis-extensiones.txt
+
+# Instalar desde lista
+vscode-config extensions restore ~/mis-extensiones.txt
+```
 
 ---
 
 ## Claude Code
 
-Configura VS Code para usar [Claude Code](https://docs.anthropic.com/claude-code) de Anthropic.
+Soporte integrado para [Claude Code](https://docs.anthropic.com/claude-code), el asistente de programación de Anthropic.
+
+### Instalación
 
 ```bash
 # 1. Instalar Claude Code CLI
 curl -fsSL https://claude.ai/install.sh | bash
 
-# 2. Configurar VS Code
+# 2. Autenticarse
+claude login
+
+# 3. Configurar VS Code (extensión + settings + extensiones útiles)
 vscode-config claude-code setup
 
-# 3. Verificar
+# 4. Verificar que todo está listo
 vscode-config claude-code status
 ```
 
-Instala la extensión oficial + extensiones complementarias (GitLens, ErrorLens, Markdown).
+### ¿Qué instala `claude-code setup`?
 
-**Requisitos**: Node.js 18+, VS Code 1.98+, cuenta Claude Pro/Max o API key.
+| Extensión | Descripción |
+|-----------|-------------|
+| `anthropic.claude-code` | Extensión oficial de Claude Code |
+| `usernamehw.errorlens` | Errores inline - Claude los ve y puede arreglarlos |
+| `esbenp.prettier-vscode` | Formateo automático de código |
+| `yzhang.markdown-all-in-one` | Para editar CLAUDE.md cómodamente |
+
+**Opcionales** (se preguntan durante setup):
+- `eamodio.gitlens` - Historial git avanzado y blame
+- `streetsidesoftware.code-spell-checker` - Corrector ortográfico
+- `christian-kohler.path-intellisense` - Autocompletado de rutas
+
+### Requisitos
+
+- Node.js 18+
+- VS Code 1.98+
+- Cuenta Claude Pro/Max o API key de Anthropic
 
 ### Documentación
 
-| Recurso | Descripción |
-|---------|-------------|
-| [docs/claude-code.md](docs/claude-code.md) | Guía completa: comandos, atajos, CLAUDE.md |
-| [examples/sinatra-api/](examples/sinatra-api/) | Tutorial práctico paso a paso |
+- **[Guía de Claude Code](docs/claude-code.md)** - Comandos, atajos, cómo usar CLAUDE.md
+- **[Tutorial práctico](examples/sinatra-api/)** - Ejemplo paso a paso con Sinatra
+
+---
+
+## Configuración aplicada
+
+### Privacidad
+
+| Setting | Efecto |
+|---------|--------|
+| `telemetry.telemetryLevel: off` | Desactiva telemetría de VS Code |
+| `workbench.enableExperiments: false` | Sin experimentos A/B de Microsoft |
+| `enable-crash-reporter: false` | Sin crash reports |
+| Extensiones | Telemetría desactivada en RedHat, GitLens, AWS, Terraform |
+
+### Seguridad
+
+| Setting | Efecto |
+|---------|--------|
+| `security.workspace.trust.enabled: true` | Pregunta antes de ejecutar código |
+| `git.autofetch: false` | Git no ejecuta comandos automáticamente |
+| `git.confirmSync: true` | Confirma antes de push/pull |
+
+### Productividad
+
+| Setting | Efecto |
+|---------|--------|
+| `files.autoSave: afterDelay` | Guarda automáticamente cada segundo |
+| `editor.formatOnSave: true` | Formatea al guardar |
+| `editor.stickyScroll.enabled: true` | Contexto de función visible |
+| `editor.bracketPairColorization.enabled: true` | Brackets coloreados |
+| `files.trimTrailingWhitespace: true` | Limpia espacios al final |
 
 ---
 
 ## Todos los comandos
 
-```bash
-vscode-config --help              # Ayuda
-vscode-config setup               # Aplicar configuración recomendada
-vscode-config show                # Ver configuración actual
-vscode-config backup <dir>        # Backup de settings, keybindings, extensiones
-vscode-config restore <dir>       # Restaurar desde backup
-vscode-config extensions list     # Listar extensiones
-vscode-config claude-code setup   # Configurar Claude Code
-vscode-config claude-code status  # Verificar Claude Code
 ```
+vscode-config --help                  Muestra ayuda
+vscode-config setup                   Aplica configuración recomendada
+vscode-config show                    Muestra configuración actual
+
+vscode-config backup <dir>            Guarda settings, keybindings, extensiones
+vscode-config restore <dir>           Restaura desde backup
+
+vscode-config extensions list         Lista extensiones instaladas
+vscode-config extensions backup <f>   Exporta lista de extensiones
+vscode-config extensions restore <f>  Instala extensiones desde lista
+
+vscode-config claude-code setup       Configura VS Code para Claude Code
+vscode-config claude-code status      Verifica instalación de Claude Code
+```
+
+---
+
+## Archivos de configuración
+
+| Archivo | Ubicación (Linux) |
+|---------|-------------------|
+| Settings | `~/.config/Code/User/settings.json` |
+| Keybindings | `~/.config/Code/User/keybindings.json` |
+| Snippets | `~/.config/Code/User/snippets/` |
+| Runtime | `~/.config/Code/argv.json` |
+
+En **macOS**: `~/Library/Application Support/Code/User/`
 
 ---
 
 ## Proyecto relacionado
 
-[cursor-init](https://github.com/icalvete/cursor-init) - Lo mismo para Cursor IDE.
+**[cursor-init](https://github.com/icalvete/cursor-init)** - Lo mismo para Cursor IDE.
+
+---
 
 ## Licencia
 
-MIT
+MIT - ver [LICENSE](LICENSE)

@@ -756,13 +756,15 @@ Uso:
 # Extensiones para Claude Code
 CLAUDE_CODE_EXTENSIONS=(
     "anthropic.claude-code"           # Extensión oficial (obligatoria)
+    "usernamehw.errorlens"            # Errores inline - Claude los ve
+    "esbenp.prettier-vscode"          # Formateo automático
+    "yzhang.markdown-all-in-one"      # Para editar CLAUDE.md
 )
 
 CLAUDE_CODE_EXTENSIONS_OPTIONAL=(
-    "eamodio.gitlens"                 # Visualización de diffs mejorada
-    "yzhang.markdown-all-in-one"      # Soporte Markdown para CLAUDE.md
-    "usernamehw.errorlens"            # Errores inline en el editor
+    "eamodio.gitlens"                        # Historial git y blame
     "streetsidesoftware.code-spell-checker"  # Corrector ortográfico
+    "christian-kohler.path-intellisense"     # Autocompletado de rutas
 )
 
 cmd_claude_code() {
