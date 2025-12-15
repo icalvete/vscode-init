@@ -161,10 +161,12 @@ Escribe tu primera pregunta y Claude leerá automáticamente `CLAUDE.md` para en
 
 ### Mencionar archivos
 
-Usa `@` para referenciar archivos:
+Usa `@` para referenciar archivos desde la raíz del proyecto:
 
 ```
-@src/app.js ¿Puedes añadir validación de entrada?
+@bin/vscode-init ¿Puedes explicar este script?
+@templates/claude-md/base.md revisar este template
+@CLAUDE.md actualizar la documentación
 ```
 
 <!-- TODO: captura 04-at-mention-autocompletado.png - Autocompletado de archivos con @ -->
