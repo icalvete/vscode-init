@@ -1,0 +1,3 @@
+# Extensiones JavaScript
+dbaeumer.vscode-eslint
+esbenp.prettier-vscode

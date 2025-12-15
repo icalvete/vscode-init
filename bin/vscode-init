@@ -32,6 +32,7 @@ TARGET_DIR=""
 FLAG_RUBY=false
 FLAG_PYTHON=false
 FLAG_JAVASCRIPT=false
+FLAG_PHP=false
 FLAG_RAILS=false
 FLAG_MCP_GITHUB=false
 FLAG_MCP_POSTGRES=false
@@ -53,6 +54,7 @@ Opciones:
   --ruby          Añade convenciones Ruby (YARD, rubocop)
   --python        Añade convenciones Python (PEP8, docstrings)
   --javascript    Añade convenciones JavaScript (JSDoc, ESLint)
+  --php           Añade convenciones PHP (PSR-12, PHPDoc)
   --rails         Añade convenciones Ruby on Rails
   --mcp-github    Configura MCP para GitHub API
   --mcp-postgres  Configura MCP para PostgreSQL
@@ -179,7 +181,7 @@ copy_commands() {
         fi
     done
 
-    ok "Comandos /document y /review disponibles"
+    ok "Comandos personalizados disponibles"
 }
 
 # Configurar MCP
@@ -254,7 +256,54 @@ show_summary() {
         echo "      └── settings.json"
     fi
 
-    echo ""
+    # Mostrar extensiones recomendadas
+    local has_extensions=false
+    local extensions=""
+
+    if [[ "$FLAG_RUBY" == true && -f "$TEMPLATE_DIR/extensions/ruby.txt" ]]; then
+        extensions+=$(grep -v "^#" "$TEMPLATE_DIR/extensions/ruby.txt" | grep -v "^$")$'\n'
+        has_extensions=true
+    fi
+    if [[ "$FLAG_PYTHON" == true && -f "$TEMPLATE_DIR/extensions/python.txt" ]]; then
+        extensions+=$(grep -v "^#" "$TEMPLATE_DIR/extensions/python.txt" | grep -v "^$")$'\n'
+        has_extensions=true
+    fi
+    if [[ "$FLAG_JAVASCRIPT" == true && -f "$TEMPLATE_DIR/extensions/javascript.txt" ]]; then
+        extensions+=$(grep -v "^#" "$TEMPLATE_DIR/extensions/javascript.txt" | grep -v "^$")$'\n'
+        has_extensions=true
+    fi
+    if [[ "$FLAG_PHP" == true && -f "$TEMPLATE_DIR/extensions/php.txt" ]]; then
+        extensions+=$(grep -v "^#" "$TEMPLATE_DIR/extensions/php.txt" | grep -v "^$")$'\n'
+        has_extensions=true
+    fi
+
+    if [[ "$has_extensions" == true ]]; then
+        echo "Extensiones recomendadas:"
+        echo "$extensions" | grep -v "^$" | while read -r ext; do
+            echo "  - $ext"
+        done
+        echo ""
+
+        if command -v code &> /dev/null; then
+            read -p "¿Instalar extensiones? [s/N] " -n 1 -r
+            echo ""
+            if [[ $REPLY =~ ^[Ss]$ ]]; then
+                echo ""
+                echo "$extensions" | grep -v "^$" | while read -r ext; do
+                    if code --install-extension "$ext" &> /dev/null; then
+                        ok "$ext instalada"
+                    else
+                        warn "No se pudo instalar $ext"
+                    fi
+                done
+                echo ""
+            fi
+        else
+            warn "Comando 'code' no disponible. Instala las extensiones manualmente."
+            echo ""
+        fi
+    fi
+
     echo "Próximos pasos:"
     echo "  1. cd $target"
     echo "  2. code ."
@@ -280,6 +329,10 @@ parse_args() {
                 ;;
             --javascript|--js)
                 FLAG_JAVASCRIPT=true
+                shift
+                ;;
+            --php)
+                FLAG_PHP=true
                 shift
                 ;;
             --rails)
@@ -349,6 +402,11 @@ main() {
     if [[ "$FLAG_JAVASCRIPT" == true ]]; then
         copy_language "$TARGET_DIR" "javascript"
         copy_vscode_settings "$TARGET_DIR" "javascript"
+    fi
+
+    if [[ "$FLAG_PHP" == true ]]; then
+        copy_language "$TARGET_DIR" "php"
+        copy_vscode_settings "$TARGET_DIR" "php"
     fi
 
     # Copiar frameworks

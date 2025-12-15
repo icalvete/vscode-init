@@ -288,13 +288,11 @@ Descripción breve del proyecto.
 
 ## Estructura del proyecto
 
-```
-src/
-├── app.rb          # Punto de entrada
-├── models/         # Modelos de datos
-├── routes/         # Definición de rutas
-└── services/       # Lógica de negocio
-```
+    src/
+    ├── app.rb          # Punto de entrada
+    ├── models/         # Modelos de datos
+    ├── routes/         # Definición de rutas
+    └── services/       # Lógica de negocio
 
 ## Convenciones
 

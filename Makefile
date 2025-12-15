@@ -1,7 +1,7 @@
 # vscode-init Makefile
 # ====================
 
-PREFIX ?= /usr/local
+PREFIX ?= $(HOME)/.local
 BINDIR = $(PREFIX)/bin
 CURDIR_ABS = $(shell pwd)
 
@@ -15,11 +15,10 @@ help:
 	@echo "  make uninstall  Desinstala ambas herramientas"
 	@echo ""
 	@echo "Opciones:"
-	@echo "  PREFIX=/path    Directorio de instalación (default: /usr/local)"
+	@echo "  PREFIX=/path    Directorio de instalación (default: ~/.local)"
 	@echo ""
-	@echo "Ejemplos:"
-	@echo "  sudo make install"
-	@echo "  make install PREFIX=~/.local"
+	@echo "IMPORTANTE: La instalación crea symlinks al repositorio."
+	@echo "            No borres ni muevas este directorio después de instalar."
 
 install:
 	@echo "Instalando vscode-init y vscode-config en $(BINDIR)..."
@@ -29,9 +28,10 @@ install:
 	@chmod +x $(CURDIR_ABS)/bin/vscode-init
 	@chmod +x $(CURDIR_ABS)/bin/vscode-config
 	@echo ""
-	@echo "Instalación completada:"
-	@echo "  - vscode-init: Inicializa proyectos para Claude Code"
-	@echo "  - vscode-config: Configura VS Code globalmente"
+	@echo "Instalación completada."
+	@echo ""
+	@echo "IMPORTANTE: Este directorio contiene los scripts."
+	@echo "            No lo borres ni lo muevas."
 	@echo ""
 	@echo "Uso:"
 	@echo "  vscode-init --help"

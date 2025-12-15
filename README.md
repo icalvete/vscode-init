@@ -6,7 +6,8 @@
 
 <p align="center">
   Configura VS Code con privacidad, seguridad y productividad en un comando.<br>
-  Incluye soporte para <a href="#claude-code">Claude Code</a>.
+  Incluye soporte para <a href="#claude-code">Claude Code</a>.<br>
+  <em>Templates optimizados para mínimo consumo de tokens.</em>
 </p>
 
 ---
@@ -47,14 +48,14 @@ vscode-config setup
 sudo apt install jq      # Ubuntu/Debian
 brew install jq          # macOS
 
-# 2. Clonar e instalar
+# 2. Clonar en tu home e instalar
+cd ~
 git clone https://github.com/icalvete/vscode-init.git
 cd vscode-init
-sudo make install
-
-# O sin sudo (instala en ~/.local/bin)
-make install PREFIX=~/.local
+make install
 ```
+
+> **Importante**: La instalación crea symlinks a este directorio. No lo borres ni lo muevas después de instalar.
 
 ---
 

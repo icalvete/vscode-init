@@ -43,6 +43,7 @@ vscode-init ~/proyectos/mi-app --ruby --python  # Lenguajes combinables
 | `--ruby` | Convenciones Ruby (YARD, rubocop) |
 | `--python` | Convenciones Python (PEP8, docstrings) |
 | `--javascript` | Convenciones JavaScript (JSDoc, ESLint) |
+| `--php` | Convenciones PHP (PSR-12, PHPDoc) |
 | `--rails` | Ruby on Rails (implica --ruby) |
 | `--mcp-github` | Configura MCP para GitHub API |
 | `--mcp-postgres` | Configura MCP para PostgreSQL |
@@ -119,6 +120,32 @@ Busca problemas de:
 - **Performance**: N+1 queries, loops ineficientes
 - **Legibilidad**: Nombres claros, funciones cortas, DRY
 - **Tests**: Cobertura, casos edge
+
+### /explain
+
+Explica código complejo de forma clara.
+
+```
+/explain @lib/services/payment.rb
+/explain @src/utils/parser.py función parse_config
+/explain este bloque de código [código pegado]
+```
+
+### /security
+
+Auditoría de seguridad del código.
+
+```
+/security
+/security @lib/routes/auth.rb
+/security @src/api/ solo endpoints públicos
+```
+
+Busca:
+- **Inyecciones**: SQL, Command, XSS, Path Traversal
+- **Autenticación**: Contraseñas, tokens, sesiones
+- **Datos sensibles**: Secrets en código, logs
+- **Configuración**: Debug, CORS, headers, HTTPS
 
 ---
 
@@ -199,6 +226,32 @@ async/await
 const name = user.name; const age = user.age;
 oldItems.concat([newItem])
 .then().catch()
+```
+
+### PHP (`--php`)
+
+| Elemento | Convención |
+|----------|------------|
+| Clases | `PascalCase` (`UserAccount`) |
+| Métodos/funciones | `camelCase` (`getUserName`) |
+| Variables | `camelCase` (`$userName`) |
+| Constantes | `SCREAMING_SNAKE_CASE` (`MAX_RETRIES`) |
+| Namespaces | `PascalCase` (`App\Services`) |
+| Indentación | 4 espacios |
+| Líneas | máx 120 caracteres |
+
+**Idioms preferidos:**
+
+```php
+// Usar
+$result = $array['key'] ?? 'default';
+$name = $user?->getName();
+match($status) { 'active' => true, default => false };
+
+// Evitar
+$result = isset($array['key']) ? $array['key'] : 'default';
+$name = $user !== null ? $user->getName() : null;
+switch/case largo
 ```
 
 ### Ruby on Rails (`--rails`)
@@ -295,6 +348,23 @@ def function(param1: str, param2: int) -> bool:
  */
 function functionName(name, age = 0) {
   // ...
+}
+```
+
+### PHP: PHPDoc
+
+```php
+/**
+ * Descripción del método.
+ *
+ * @param string $name Descripción del parámetro
+ * @param int|null $age Parámetro opcional
+ * @return bool Descripción del retorno
+ * @throws InvalidArgumentException Cuándo se lanza
+ */
+public function methodName(string $name, ?int $age = null): bool
+{
+    // ...
 }
 ```
 
