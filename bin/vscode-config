@@ -765,6 +765,9 @@ CLAUDE_CODE_EXTENSIONS_OPTIONAL=(
     "eamodio.gitlens"                        # Historial git y blame
     "streetsidesoftware.code-spell-checker"  # Corrector ortográfico
     "christian-kohler.path-intellisense"     # Autocompletado de rutas
+    "ms-vscode-remote.remote-ssh"            # Desarrollo remoto por SSH
+    "ms-vscode-remote.remote-ssh-edit"       # Edición de config SSH
+    "ms-vscode.remote-explorer"              # Explorador de conexiones remotas
 )
 
 cmd_claude_code() {
