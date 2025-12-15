@@ -413,11 +413,21 @@ cmd_setup() {
     echo ""
     echo -e "${GREEN}${BOLD}Configuración aplicada${NC}"
     echo ""
-    echo -e "${YELLOW}Nota:${NC} Reinicia VS Code para que los cambios tengan efecto."
+
+    # Preguntar si instalar Claude Code
     echo ""
-    echo "Puedes ver la configuración actual con:"
-    echo "  vscode-config show"
+    read -p "¿Instalar Claude Code y extensiones recomendadas? [Y/n] " -n 1 -r
     echo ""
+
+    if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+        cmd_claude_code_setup
+    else
+        echo -e "${YELLOW}Nota:${NC} Reinicia VS Code para que los cambios tengan efecto."
+        echo ""
+        echo "Para instalar Claude Code más tarde:"
+        echo "  vscode-config claude-code setup"
+        echo ""
+    fi
 }
 
 # ============================================================================
