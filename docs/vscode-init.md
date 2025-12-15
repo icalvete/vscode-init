@@ -96,17 +96,209 @@ Proyecto configurado con vscode-init para Claude Code.
 
 ### /document
 
-Documenta código siguiendo las convenciones del proyecto:
-- Ruby: YARD
-- Python: Google-style docstrings
-- JavaScript: JSDoc
+Documenta código siguiendo las convenciones del proyecto.
+
+```
+/document @lib/models/user.rb
+/document @src/utils/validation.py método validate_email
+/document @lib/services/payment.js clase PaymentProcessor
+```
 
 ### /review
 
-Realiza code review local (sin GitHub):
-- Analiza cambios uncommitted
-- Busca problemas de seguridad, performance, legibilidad
-- Sugiere mejoras concretas
+Realiza code review local (sin GitHub).
+
+```
+/review
+/review @lib/routes/tasks.rb
+/review solo los cambios en models/
+```
+
+Busca problemas de:
+- **Seguridad**: Inyecciones, secrets expuestos, permisos
+- **Performance**: N+1 queries, loops ineficientes
+- **Legibilidad**: Nombres claros, funciones cortas, DRY
+- **Tests**: Cobertura, casos edge
+
+---
+
+## Convenciones por lenguaje
+
+### Ruby (`--ruby`)
+
+| Elemento | Convención |
+|----------|------------|
+| Clases | `PascalCase` (`UserAccount`) |
+| Métodos/variables | `snake_case` (`find_user`) |
+| Constantes | `SCREAMING_SNAKE_CASE` (`MAX_RETRIES`) |
+| Predicados | terminan en `?` (`empty?`, `valid?`) |
+| Destructivos | terminan en `!` (`save!`, `delete!`) |
+| Indentación | 2 espacios |
+| Líneas | máx 100 caracteres |
+
+**Idioms preferidos:**
+
+```ruby
+# Usar
+array.map(&:method)
+hash[:key] ||= default
+%w[uno dos tres]
+
+# Evitar
+array.map { |x| x.method }
+hash[:key] = hash[:key] || default
+['uno', 'dos', 'tres']
+```
+
+### Python (`--python`)
+
+| Elemento | Convención |
+|----------|------------|
+| Módulos/funciones/variables | `snake_case` |
+| Clases | `PascalCase` |
+| Constantes | `SCREAMING_SNAKE_CASE` |
+| Privados | prefijo `_` (`_internal_method`) |
+| Indentación | 4 espacios |
+| Líneas | máx 99 caracteres |
+| Tipos | Type hints obligatorios |
+
+**Idioms preferidos:**
+
+```python
+# Usar
+[x for x in items if x.valid]
+with open('file') as f:
+f"Hello {name}"
+
+# Evitar
+filter(lambda x: x.valid, items)
+f = open('file'); f.close()
+"Hello " + name
+```
+
+### JavaScript (`--javascript`)
+
+| Elemento | Convención |
+|----------|------------|
+| Variables/funciones | `camelCase` (`getUserName`) |
+| Clases/componentes | `PascalCase` (`UserAccount`) |
+| Constantes | `SCREAMING_SNAKE_CASE` |
+| Booleanos | prefijos `is`, `has`, `can` |
+| Indentación | 2 espacios |
+| Líneas | máx 100 caracteres |
+
+**Idioms preferidos:**
+
+```javascript
+// Usar
+const { name, age } = user;
+const items = [...oldItems, newItem];
+async/await
+
+// Evitar
+const name = user.name; const age = user.age;
+oldItems.concat([newItem])
+.then().catch()
+```
+
+### Ruby on Rails (`--rails`)
+
+Implica `--ruby` automáticamente.
+
+| Elemento | Convención |
+|----------|------------|
+| Controllers | Thin (5-7 líneas por action) |
+| Models | Fat (lógica de negocio aquí) |
+| Views | Sin queries, solo helpers |
+| Lógica compleja | Service Objects |
+| Queries complejas | Query Objects |
+
+**Seguridad:**
+
+```ruby
+# Strong Parameters siempre
+params.require(:user).permit(:name, :email)
+
+# Placeholders para SQL (evitar inyección)
+User.where('email = ?', email)
+
+# No desactivar CSRF
+protect_from_forgery
+```
+
+**Performance:**
+
+```ruby
+# Evitar N+1
+User.includes(:posts).each { |u| u.posts }
+
+# Grandes volúmenes
+User.find_each(batch_size: 1000) { |u| process(u) }
+
+# Background jobs
+ProcessOrderJob.perform_later(order_id)
+```
+
+---
+
+## Formatos de documentación
+
+### Ruby: YARD
+
+```ruby
+# Descripción del método
+#
+# @param name [String] descripción del parámetro
+# @return [Boolean] descripción del retorno
+# @raise [ArgumentError] cuándo se lanza
+# @example
+#   method_name('ejemplo') #=> true
+def method_name(name)
+  # ...
+end
+```
+
+### Python: Google-style docstrings
+
+```python
+def function(param1: str, param2: int) -> bool:
+    """Descripción breve del método.
+
+    Args:
+        param1: Descripción del parámetro.
+        param2: Descripción del parámetro.
+
+    Returns:
+        Descripción del valor de retorno.
+
+    Raises:
+        ValueError: Cuándo se lanza.
+
+    Example:
+        >>> function('test', 42)
+        True
+    """
+```
+
+### JavaScript: JSDoc
+
+```javascript
+/**
+ * Descripción del método.
+ *
+ * @param {string} name - Descripción del parámetro
+ * @param {number} [age=0] - Parámetro opcional con default
+ * @returns {boolean} Descripción del retorno
+ * @throws {Error} Cuándo se lanza
+ * @example
+ * functionName('test', 42) // => true
+ */
+function functionName(name, age = 0) {
+  // ...
+}
+```
+
+---
 
 ## MCP (Model Context Protocol)
 
