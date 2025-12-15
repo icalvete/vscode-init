@@ -4,7 +4,10 @@
       "Bash(tree:*)",
       "Bash(chmod:*)",
       "Bash(/home/icalvete/vscode-init/bin/vscode-init:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(./bin/vscode-config extensions list:*)",
+      "Bash(./bin/vscode-config claude-code status:*)",
+      "Bash(./bin/vscode-init:*)"
     ]
   }
 }
