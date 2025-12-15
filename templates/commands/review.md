@@ -36,3 +36,11 @@ Presenta un resumen con:
 - Esta es una revisión **local** (no usa GitHub CLI)
 - Enfócate en los cambios recientes, no en todo el proyecto
 - Sé constructivo y específico en las sugerencias
+
+## Ejemplos de uso
+
+```
+/review
+/review @lib/routes/tasks.rb
+/review solo los cambios en models/
+```
