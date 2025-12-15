@@ -7,7 +7,9 @@
       "Bash(cat:*)",
       "Bash(./bin/vscode-config extensions list:*)",
       "Bash(./bin/vscode-config claude-code status:*)",
-      "Bash(./bin/vscode-init:*)"
+      "Bash(./bin/vscode-init:*)",
+      "Bash(wc:*)",
+      "Bash(ruby -c:*)"
     ]
   }
 }
