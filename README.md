@@ -13,14 +13,30 @@
 
 ## ¿Qué hace?
 
-**vscode-config** es un script que configura VS Code de forma segura y productiva:
+Este proyecto incluye dos herramientas:
 
-- **Desactiva telemetría** de VS Code y extensiones populares (RedHat, GitLens, AWS...)
+### vscode-init
+
+Inicializa proyectos con configuración para Claude Code:
+
+```bash
+vscode-init ~/proyectos/mi-app --ruby --rails --mcp-github
+```
+
+Genera: `CLAUDE.md`, comandos personalizados (`/document`, `/review`), y settings de VS Code.
+
+### vscode-config
+
+Configura VS Code globalmente de forma segura y productiva:
+
+- **Desactiva telemetría** de VS Code y extensiones populares
 - **Activa protecciones** como Workspace Trust y confirmaciones de git
-- **Mejora productividad** con auto-save, format on save, sticky scroll, bracket colors
+- **Mejora productividad** con auto-save, format on save, sticky scroll
 - **Instala Claude Code** con extensiones complementarias
 
-Todo esto ejecutando un solo comando: `vscode-config setup`
+```bash
+vscode-config setup
+```
 
 ---
 
@@ -42,7 +58,45 @@ make install PREFIX=~/.local
 
 ---
 
-## Uso
+## Inicializar proyectos (vscode-init)
+
+```bash
+# Proyecto básico
+vscode-init ~/proyectos/mi-app
+
+# Con lenguaje
+vscode-init ~/proyectos/mi-app --ruby
+vscode-init ~/proyectos/mi-app --python
+vscode-init ~/proyectos/mi-app --javascript
+
+# Con framework
+vscode-init ~/proyectos/mi-app --rails
+
+# Con MCP
+vscode-init ~/proyectos/mi-app --mcp-github
+vscode-init ~/proyectos/mi-app --mcp-postgres
+
+# Combinaciones
+vscode-init ~/proyectos/mi-app --rails --mcp-github
+```
+
+### Estructura generada
+
+```
+mi-proyecto/
+├── CLAUDE.md              # Contexto del proyecto
+├── .claude/
+│   ├── commands/          # /document, /review
+│   └── mcp.json           # Si usas --mcp-*
+└── .vscode/
+    └── settings.json      # Settings del lenguaje
+```
+
+Ver [docs/vscode-init.md](docs/vscode-init.md) para más detalles.
+
+---
+
+## Configurar VS Code (vscode-config)
 
 ### Configuración básica
 

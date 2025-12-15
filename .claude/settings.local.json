@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "Bash(chmod:*)",
+      "Bash(/home/icalvete/vscode-init/bin/vscode-init:*)",
+      "Bash(cat:*)"
+    ]
+  }
+}
