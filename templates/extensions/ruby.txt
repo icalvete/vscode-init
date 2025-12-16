@@ -1,3 +1,12 @@
 # Extensiones Ruby
+
+# Language servers (elige uno)
 Shopify.ruby-lsp
 castwide.solargraph
+
+# Linting y soporte básico
+rubocop.vscode-rubocop
+wingrunr21.vscode-ruby
+
+# Templates ERB (para Rails)
+craigmaslowski.erb
