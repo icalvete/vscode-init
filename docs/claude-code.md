@@ -72,20 +72,41 @@ O desde VS Code:
 3. Busca "Claude Code"
 4. Instala la extensión de Anthropic
 
-#### 3. Extensiones complementarias (opcionales)
+#### 3. Extensiones complementarias
+
+**Extensiones obligatorias** (instaladas por `vscode-config claude-code setup`):
+
+| Extensión | Descripción | ¿Por qué es necesaria? |
+|-----------|-------------|------------------------|
+| `anthropic.claude-code` | Extensión oficial de Claude Code | **Obligatoria** - Motor principal de Claude Code |
+| `usernamehw.errorlens` | Errores y warnings inline | Claude puede ver errores directamente en el código |
+| `esbenp.prettier-vscode` | Formateador de código | Formateo automático del código generado |
+| `yzhang.markdown-all-in-one` | Soporte completo Markdown | Para editar y previsualizar CLAUDE.md |
+
+**Extensiones opcionales** (pregunta durante instalación):
+
+| Extensión | Descripción | Cuándo usarla |
+|-----------|-------------|---------------|
+| `eamodio.gitlens` | Git supercharged con blame, historial, diffs | Ver historial de cambios, quién modificó qué |
+| `streetsidesoftware.code-spell-checker` | Corrector ortográfico | Proyectos con documentación extensa |
+| `christian-kohler.path-intellisense` | Autocompletado de rutas | Proyectos con muchos imports/requires |
+| `ms-vscode-remote.remote-ssh` | Desarrollo remoto SSH | Trabajar en servidores remotos |
+| `ms-vscode-remote.remote-ssh-edit` | Editar config SSH | Gestionar múltiples conexiones SSH |
+| `ms-vscode.remote-explorer` | Explorador de conexiones remotas | Navegador de servidores y contenedores |
+
+**Instalación manual:**
 
 ```bash
-# Mejor visualización de diffs y Git
-code --install-extension eamodio.gitlens
-
-# Soporte Markdown mejorado
+# Extensiones obligatorias
+code --install-extension anthropic.claude-code
+code --install-extension usernamehw.errorlens
+code --install-extension esbenp.prettier-vscode
 code --install-extension yzhang.markdown-all-in-one
 
-# Errores inline en el editor
-code --install-extension usernamehw.errorlens
-
-# Corrector ortográfico
+# Extensiones opcionales
+code --install-extension eamodio.gitlens
 code --install-extension streetsidesoftware.code-spell-checker
+code --install-extension christian-kohler.path-intellisense
 ```
 
 ---

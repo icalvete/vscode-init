@@ -63,6 +63,96 @@ mi-proyecto/
     └── settings.json        # Settings del lenguaje
 ```
 
+## Extensiones recomendadas
+
+Al inicializar un proyecto, `vscode-init` ofrece instalar extensiones según el lenguaje elegido.
+
+### Extensiones base (todos los proyectos)
+
+Estas se ofrecen en todos los proyectos:
+
+| Extensión | Descripción |
+|-----------|-------------|
+| **Remote Development** | |
+| `ms-vscode-remote.remote-ssh` | Conectar a servidores remotos vía SSH |
+| `ms-vscode-remote.remote-ssh-edit` | Editar configuración SSH con autocompletado |
+| `ms-vscode.remote-explorer` | Explorador unificado de conexiones remotas |
+| **Productividad** | |
+| `usernamehw.errorlens` | Errores y warnings inline (Claude los ve mejor) |
+| `esbenp.prettier-vscode` | Formateador de código multilenguaje |
+| `yzhang.markdown-all-in-one` | Soporte completo para Markdown (editar CLAUDE.md) |
+| `christian-kohler.path-intellisense` | Autocompletado de rutas de archivos |
+| **Calidad de código** | |
+| `sonarsource.sonarlint-vscode` | Análisis estático en tiempo real (bugs, vulnerabilidades, code smells) |
+| **Docker y contenedores** | |
+| `ms-azuretools.vscode-docker` | Gestión completa de Docker (imágenes, contenedores, registries) |
+| `ms-vscode-remote.remote-containers` | Desarrollar dentro de contenedores Docker |
+
+### Extensiones Ruby (`--ruby`)
+
+| Extensión | Descripción |
+|-----------|-------------|
+| `Shopify.ruby-lsp` | Language server oficial de Shopify (IntelliSense, go-to-definition) |
+| `castwide.solargraph` | Language server alternativo con documentación inline |
+| `rubocop.vscode-rubocop` | Integración con RuboCop (linter oficial Ruby) |
+| `wingrunr21.vscode-ruby` | Soporte básico de Ruby (syntax highlighting, snippets) |
+| `craigmaslowski.erb` | Syntax highlighting para templates ERB (Rails views) |
+
+**Nota:** Se recomienda elegir **uno** de los language servers (ruby-lsp o solargraph), no ambos.
+
+### Extensiones Python (`--python`)
+
+| Extensión | Descripción |
+|-----------|-------------|
+| **Stack principal** | |
+| `ms-python.python` | Extensión oficial de Python (debugging, testing, refactoring) |
+| `ms-python.vscode-pylance` | Language server de alto rendimiento (type checking, auto-imports) |
+| `ms-python.debugpy` | Debugger oficial de Python |
+| **Formateo y linting** | |
+| `ms-python.black-formatter` | Integración con Black (formateador opinionado) |
+| `ms-python.pylint` | Integración con Pylint (linter) |
+| **Jupyter Notebooks** | |
+| `ms-toolsai.jupyter` | Soporte completo para notebooks Jupyter |
+| `ms-toolsai.jupyter-keymap` | Atajos de teclado de Jupyter clásico |
+| `ms-toolsai.jupyter-renderers` | Renderizado avanzado (Plotly, Vega, etc.) |
+| `ms-toolsai.vscode-jupyter-cell-tags` | Etiquetar y organizar celdas |
+| `ms-toolsai.vscode-jupyter-slideshow` | Crear presentaciones desde notebooks |
+
+### Extensiones JavaScript (`--javascript`)
+
+| Extensión | Descripción |
+|-----------|-------------|
+| `dbaeumer.vscode-eslint` | Integración con ESLint (linter JavaScript/TypeScript) |
+| `esbenp.prettier-vscode` | Formateador de código (ya incluido en base) |
+
+### Extensiones PHP (`--php`)
+
+| Extensión | Descripción |
+|-----------|-------------|
+| `bmewburn.vscode-intelephense-client` | Language server PHP (IntelliSense, refactoring) |
+| `xdebug.php-debug` | Debugger PHP con Xdebug |
+
+### Instalación de extensiones
+
+Durante `vscode-init`, se pregunta:
+
+```bash
+¿Instalar extensiones? [s/N]
+```
+
+- **s (Sí):** Instala todas las extensiones recomendadas para el lenguaje
+- **N (No):** Omite instalación (puedes instalarlas manualmente después)
+
+Para instalar manualmente después:
+
+```bash
+# Desde VS Code
+Ctrl+Shift+X → Buscar extensión → Install
+
+# Desde terminal
+code --install-extension Shopify.ruby-lsp
+```
+
 ## CLAUDE.md
 
 El archivo `CLAUDE.md` es el contexto que Claude Code lee automáticamente. Incluye:

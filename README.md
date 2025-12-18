@@ -121,6 +121,18 @@ vscode-config restore ~/vscode-backup
 
 ### Extensiones
 
+`vscode-init` ofrece instalar extensiones según el lenguaje del proyecto:
+
+- **Base:** Remote SSH, ErrorLens, Prettier, Markdown, SonarLint, Docker
+- **Ruby:** Ruby LSP, Solargraph, RuboCop, ERB
+- **Python:** Python, Pylance, Debugpy, Black, Pylint, Jupyter (5 extensiones)
+- **JavaScript:** ESLint, Prettier
+- **PHP:** Intelephense, Xdebug
+
+Ver [documentación completa de extensiones](docs/vscode-init.md#extensiones-recomendadas).
+
+**Comandos de gestión:**
+
 ```bash
 # Ver extensiones instaladas
 vscode-config extensions list
@@ -167,6 +179,9 @@ vscode-config claude-code status
 - `eamodio.gitlens` - Historial git avanzado y blame
 - `streetsidesoftware.code-spell-checker` - Corrector ortográfico
 - `christian-kohler.path-intellisense` - Autocompletado de rutas
+- `ms-vscode-remote.remote-ssh` - Desarrollo remoto por SSH
+- `ms-vscode-remote.remote-ssh-edit` - Editar configuración SSH
+- `ms-vscode.remote-explorer` - Explorador de conexiones remotas
 
 ### Requisitos
 
