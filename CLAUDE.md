@@ -57,8 +57,11 @@ vscode-init/
 │   └── vscode-config        # Configura VS Code global (~1030 líneas bash)
 ├── templates/
 │   ├── claude-md/           # Templates CLAUDE.md (base, ruby, python, js, rails)
-│   ├── commands/            # /document, /review
+│   ├── commands/            # /document, /review, /explain, /security
+│   ├── extensions/          # Listas de extensiones (base, ruby, python, js, php)
+│   ├── keybindings/         # Atajos de teclado (claude-code.json)
 │   ├── mcp/                 # github.json, postgres.json
+│   ├── settings/            # Settings de Claude Code
 │   └── vscode/              # Settings por lenguaje
 ├── docs/
 │   ├── vscode-init.md

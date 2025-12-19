@@ -152,9 +152,36 @@ vscode-config claude-code status
 
 ### Abrir Claude Code en VS Code
 
-1. Abre la paleta de comandos: `Ctrl+Shift+P`
-2. Escribe: `Claude Code: Open`
-3. Pulsa Enter
+Claude Code 2.x ofrece **dos modos de visualización**:
+
+#### Opción 1: Sidebar (Recomendado)
+
+Abre Claude en el panel lateral derecho:
+
+```
+Ctrl+Shift+P → "Claude Code: Open in Side Bar"
+```
+
+Esta es la ubicación recomendada, te permite ver el código y Claude simultáneamente.
+
+#### Opción 2: Panel/Tab
+
+Abre Claude como una pestaña en el editor:
+
+```
+Ctrl+Shift+P → "Claude Code: Open"
+```
+
+**Nota:** Claude Code 2.x ya no muestra un ícono en la Activity Bar (barra de iconos izquierda) como versiones anteriores. En su lugar, se abre en el sidebar derecho o como pestaña según tu preferencia.
+
+**Configurar ubicación por defecto:**
+
+En `settings.json`:
+```json
+{
+  "claudeCode.preferredLocation": "sidebar"  // o "panel"
+}
+```
 
 ![Icono de Claude en la barra lateral](../assets/01-panel-claude-code-inicio.png)
 
@@ -250,11 +277,36 @@ Los comandos slash te permiten acceder a funcionalidades avanzadas:
 
 ## Atajos de teclado
 
-### En el panel de Claude Code
+### Abrir Claude Code en VS Code
 
 | Atajo | Descripción |
 |-------|-------------|
-| `Ctrl+Click` en diff | Expandir detalles completos |
+| **`Ctrl+Alt+C`** ⭐ | **Abrir Claude Code en sidebar** (atajo recomendado) |
+| `Ctrl+Shift+P` → "Claude Code: Open in Side Bar" | Abrir en sidebar (comando manual) |
+| `Ctrl+Shift+P` → "Claude Code: Open" | Abrir como pestaña |
+
+**Atajo recomendado:** Este proyecto incluye un template de keybindings en `templates/keybindings/claude-code.json` con `Ctrl+Alt+C` configurado para abrir Claude Code rápidamente.
+
+**Instalación del atajo:**
+
+El comando `vscode-config claude-code setup` instalará estos atajos automáticamente, o instálalos manualmente:
+
+```bash
+# Linux
+cat templates/keybindings/claude-code.json >> ~/.config/Code/User/keybindings.json
+
+# macOS
+cat templates/keybindings/claude-code.json >> ~/Library/Application\ Support/Code/User/keybindings.json
+```
+
+### Navegación y productividad
+
+| Atajo | Descripción |
+|-------|-------------|
+| **`Ctrl+Alt+C`** | Abrir Claude Code rápidamente |
+| `Ctrl+Escape` | Toggle focus entre editor y Claude Code |
+| `Alt+K` | Insertar @ mention (mencionar archivos) |
+| `Ctrl+Click` en diff | Expandir detalles completos del diff |
 | Arrastrar panel | Más ancho = ver diffs inline |
 
 ### En terminal (CLI)

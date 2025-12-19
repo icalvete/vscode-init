@@ -92,13 +92,14 @@ Estas se ofrecen en todos los proyectos:
 
 | Extensión | Descripción |
 |-----------|-------------|
-| `Shopify.ruby-lsp` | Language server oficial de Shopify (IntelliSense, go-to-definition) |
-| `castwide.solargraph` | Language server alternativo con documentación inline |
+| `Shopify.ruby-lsp` ⭐ | **Recomendado** - Language server oficial (IntelliSense, refactoring, formateo) |
+| `castwide.solargraph` | Alternativa con documentación inline (si prefieres sobre LSP) |
 | `rubocop.vscode-rubocop` | Integración con RuboCop (linter oficial Ruby) |
-| `wingrunr21.vscode-ruby` | Soporte básico de Ruby (syntax highlighting, snippets) |
 | `craigmaslowski.erb` | Syntax highlighting para templates ERB (Rails views) |
 
-**Nota:** Se recomienda elegir **uno** de los language servers (ruby-lsp o solargraph), no ambos.
+**Recomendación:** Usa **Ruby LSP** (Shopify) como language server principal. Es más moderno, rápido y mantenido oficialmente. Solo instala Solargraph si prefieres su estilo de documentación inline.
+
+**Nota:** `wingrunr21.vscode-ruby` ya no es necesario si usas Ruby LSP o Solargraph.
 
 ### Extensiones Python (`--python`)
 

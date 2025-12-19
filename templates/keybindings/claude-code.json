@@ -1,0 +1,22 @@
+[
+  {
+    "key": "ctrl+alt+c",
+    "command": "claude-vscode.sidebar.open",
+    "when": "!terminalFocus"
+  },
+  {
+    "key": "ctrl+escape",
+    "command": "claude-vscode.focus",
+    "when": "!config.claudeCode.useTerminal && editorTextFocus"
+  },
+  {
+    "key": "ctrl+escape",
+    "command": "claude-vscode.blur",
+    "when": "!config.claudeCode.useTerminal && !editorTextFocus"
+  },
+  {
+    "key": "alt+k",
+    "command": "claude-vscode.insertAtMention",
+    "when": "editorTextFocus"
+  }
+]

@@ -9,7 +9,10 @@
       "Bash(./bin/vscode-config claude-code status:*)",
       "Bash(./bin/vscode-init:*)",
       "Bash(wc:*)",
-      "Bash(ruby -c:*)"
+      "Bash(ruby -c:*)",
+      "Bash(code --list-extensions:*)",
+      "Bash(code --uninstall-extension:*)",
+      "Bash(code:*)"
     ]
   }
 }

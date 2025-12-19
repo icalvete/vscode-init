@@ -183,6 +183,13 @@ vscode-config claude-code status
 - `ms-vscode-remote.remote-ssh-edit` - Editar configuración SSH
 - `ms-vscode.remote-explorer` - Explorador de conexiones remotas
 
+**Atajos de teclado incluidos:**
+- `Ctrl+Alt+C` - Abrir Claude Code rápidamente
+- `Ctrl+Escape` - Toggle focus entre editor y Claude
+- `Alt+K` - Insertar @ mention
+
+Ver todos los atajos en [templates/keybindings/claude-code.json](templates/keybindings/claude-code.json).
+
 ### Requisitos
 
 - Node.js 18+
