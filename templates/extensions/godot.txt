@@ -1,0 +1,14 @@
+# Extensiones Godot
+
+# Language server y debugging (obligatoria)
+geequlim.godot-tools
+
+# C# support (si usas C# en Godot)
+ms-dotnetcore.csharp
+ms-dotnettools.vscode-dotnet-runtime
+
+# Shader support
+ggsimm.godot-shader-tools
+
+# Scene preview (experimental)
+# geequlim.godot-tools ya incluye preview básico

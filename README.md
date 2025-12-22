@@ -24,7 +24,7 @@ Inicializa proyectos con configuración para Claude Code:
 vscode-init ~/proyectos/mi-app --ruby --rails --mcp-github
 ```
 
-Genera: `CLAUDE.md`, comandos personalizados (`/document`, `/review`), y settings de VS Code.
+Genera: `CLAUDE.md`, comandos personalizados (`/document`, `/review`, `/project-info`), y settings de VS Code.
 
 ### vscode-config
 
@@ -73,12 +73,18 @@ vscode-init ~/proyectos/mi-app --javascript
 # Con framework
 vscode-init ~/proyectos/mi-app --rails
 
+# Con game engine
+vscode-init ~/proyectos/mi-juego --godot
+
 # Con MCP
 vscode-init ~/proyectos/mi-app --mcp-github
 vscode-init ~/proyectos/mi-app --mcp-postgres
 
 # Combinaciones
 vscode-init ~/proyectos/mi-app --rails --mcp-github
+
+# Detección automática (si hay project.godot)
+vscode-init ~/proyectos/mi-juego-existente
 ```
 
 ### Estructura generada
@@ -87,7 +93,7 @@ vscode-init ~/proyectos/mi-app --rails --mcp-github
 mi-proyecto/
 ├── CLAUDE.md              # Contexto del proyecto
 ├── .claude/
-│   ├── commands/          # /document, /review
+│   ├── commands/          # /document, /review, /project-info
 │   └── mcp.json           # Si usas --mcp-*
 └── .vscode/
     └── settings.json      # Settings del lenguaje
@@ -199,6 +205,7 @@ Ver todos los atajos en [templates/keybindings/claude-code.json](templates/keybi
 ### Documentación
 
 - **[Guía de Claude Code](docs/claude-code.md)** - Comandos, atajos, cómo usar CLAUDE.md
+- **[Guía de Godot Engine](docs/godot.md)** - Desarrollo de videojuegos con Godot 4.x
 - **[Tutorial práctico](examples/sinatra-api/)** - Ejemplo paso a paso con Sinatra
 
 ---

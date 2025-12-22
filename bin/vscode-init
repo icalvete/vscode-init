@@ -34,6 +34,7 @@ FLAG_PYTHON=false
 FLAG_JAVASCRIPT=false
 FLAG_PHP=false
 FLAG_RAILS=false
+FLAG_GODOT=false
 FLAG_MCP_GITHUB=false
 FLAG_MCP_POSTGRES=false
 
@@ -56,14 +57,19 @@ Opciones:
   --javascript    Añade convenciones JavaScript (JSDoc, ESLint)
   --php           Añade convenciones PHP (PSR-12, PHPDoc)
   --rails         Añade convenciones Ruby on Rails
+  --godot         Añade configuración para Godot Engine 4.x
   --mcp-github    Configura MCP para GitHub API
   --mcp-postgres  Configura MCP para PostgreSQL
   --help, -h      Muestra esta ayuda
+
+Detección automática:
+  - Godot: si encuentra project.godot
 
 Ejemplos:
   vscode-init ~/proyectos/mi-app
   vscode-init ~/proyectos/mi-app --ruby
   vscode-init ~/proyectos/mi-app --rails --mcp-github
+  vscode-init ~/proyectos/mi-juego --godot
   vscode-init . --python --javascript
 
 Estructura generada:
@@ -164,6 +170,55 @@ copy_vscode_settings() {
             cp "$TEMPLATE_DIR/vscode/$lang.json" "$target/.vscode/settings.json"
         fi
         ok "Settings de $lang configurados"
+    fi
+}
+
+# Copiar templates de Godot (estructura completa)
+copy_godot_templates() {
+    local target="$1"
+
+    info "Configurando proyecto Godot..."
+
+    # Copiar estructura .vscode completa
+    if [[ -d "$TEMPLATE_DIR/godot/.vscode" ]]; then
+        mkdir -p "$target/.vscode"
+
+        # Copiar cada archivo individualmente, mergeando si es necesario
+        for vscode_file in "$TEMPLATE_DIR/godot/.vscode"/*.json; do
+            if [[ -f "$vscode_file" ]]; then
+                local filename="$(basename "$vscode_file")"
+
+                if [[ -f "$target/.vscode/$filename" ]] && command -v jq &> /dev/null; then
+                    # Merge JSON si ya existe
+                    info "Mezclando $filename con configuración Godot..."
+                    jq -s '.[0] * .[1]' "$target/.vscode/$filename" "$vscode_file" > "$target/.vscode/$filename.tmp"
+                    mv "$target/.vscode/$filename.tmp" "$target/.vscode/$filename"
+                else
+                    cp "$vscode_file" "$target/.vscode/$filename"
+                fi
+            fi
+        done
+        ok "Configuración .vscode de Godot aplicada"
+    fi
+
+    # Copiar .editorconfig si no existe
+    if [[ -f "$TEMPLATE_DIR/godot/.editorconfig" ]] && [[ ! -f "$target/.editorconfig" ]]; then
+        cp "$TEMPLATE_DIR/godot/.editorconfig" "$target/.editorconfig"
+        ok ".editorconfig de Godot copiado"
+    fi
+
+    # Copiar o merge .gitignore
+    if [[ -f "$TEMPLATE_DIR/godot/.gitignore" ]]; then
+        if [[ -f "$target/.gitignore" ]]; then
+            # Añadir al gitignore existente
+            echo "" >> "$target/.gitignore"
+            echo "# Godot" >> "$target/.gitignore"
+            cat "$TEMPLATE_DIR/godot/.gitignore" | grep -v "^#" | grep -v "^$" >> "$target/.gitignore"
+            ok ".gitignore actualizado con reglas de Godot"
+        else
+            cp "$TEMPLATE_DIR/godot/.gitignore" "$target/.gitignore"
+            ok ".gitignore de Godot creado"
+        fi
     fi
 }
 
@@ -340,6 +395,10 @@ parse_args() {
                 FLAG_RUBY=true  # Rails implica Ruby
                 shift
                 ;;
+            --godot)
+                FLAG_GODOT=true
+                shift
+                ;;
             --mcp-github)
                 FLAG_MCP_GITHUB=true
                 shift
@@ -381,6 +440,12 @@ main() {
     # Crear directorio si no existe
     mkdir -p "$TARGET_DIR"
 
+    # Detección automática de Godot
+    if [[ -f "$TARGET_DIR/project.godot" ]]; then
+        info "Proyecto Godot detectado (project.godot encontrado)"
+        FLAG_GODOT=true
+    fi
+
     echo ""
     info "Inicializando proyecto en: $TARGET_DIR"
     echo ""
@@ -412,6 +477,12 @@ main() {
     # Copiar frameworks
     if [[ "$FLAG_RAILS" == true ]]; then
         copy_language "$TARGET_DIR" "rails"
+    fi
+
+    # Copiar configuración Godot
+    if [[ "$FLAG_GODOT" == true ]]; then
+        copy_language "$TARGET_DIR" "godot"
+        copy_godot_templates "$TARGET_DIR"
     fi
 
     # Copiar comandos

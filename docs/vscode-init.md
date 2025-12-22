@@ -238,6 +238,25 @@ Busca:
 - **Datos sensibles**: Secrets en código, logs
 - **Configuración**: Debug, CORS, headers, HTTPS
 
+### /project-info
+
+Muestra información sobre la configuración del proyecto y funcionalidades disponibles.
+
+```
+/project-info
+```
+
+Analiza el proyecto y muestra:
+- **Tipo de proyecto**: Lenguajes y frameworks detectados (Ruby, Python, Rails, Godot, etc.)
+- **Comandos disponibles**: Lista de comandos custom con descripciones
+- **Características activas**: Settings de VS Code, LSP configurados, herramientas instaladas
+- **Recursos**: Links a documentación relevante (CLAUDE.md, docs/)
+
+Útil para:
+- Recordar qué comandos tienes disponibles
+- Ver qué configuración aplicó vscode-init
+- Conocer las convenciones del proyecto
+
 ---
 
 ## Convenciones por lenguaje

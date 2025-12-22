@@ -24,7 +24,9 @@ vscode-init ~/proyecto --ruby --rails --mcp-github
 
 Genera: `CLAUDE.md`, `.claude/commands/`, `.claude/mcp.json`, `.vscode/settings.json`
 
-Flags: `--ruby`, `--python`, `--javascript`, `--rails`, `--mcp-github`, `--mcp-postgres`
+Flags: `--ruby`, `--python`, `--javascript`, `--rails`, `--godot`, `--mcp-github`, `--mcp-postgres`
+
+**Detección automática:** Godot (si encuentra `project.godot`)
 
 ### vscode-config
 
