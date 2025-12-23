@@ -44,6 +44,17 @@ VSCODE_SETTINGS="$VSCODE_USER_DIR/settings.json"
 VSCODE_KEYBINDINGS="$VSCODE_USER_DIR/keybindings.json"
 VSCODE_ARGV="$VSCODE_USER_DIR/../argv.json"
 
+# Directorio del script (para encontrar templates)
+# Resuelve symlinks para obtener la ruta real
+SCRIPT_PATH="${BASH_SOURCE[0]}"
+while [[ -L "$SCRIPT_PATH" ]]; do
+    SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
+    SCRIPT_PATH="$(readlink "$SCRIPT_PATH")"
+    [[ "$SCRIPT_PATH" != /* ]] && SCRIPT_PATH="$SCRIPT_DIR/$SCRIPT_PATH"
+done
+SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
+TEMPLATE_DIR="$(dirname "$SCRIPT_DIR")/templates"
+
 # Colores
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -924,6 +935,37 @@ Puedes añadirlo desde VS Code: Cmd/Ctrl+Shift+P → 'Shell Command: Install cod
         set_setting '."errorLens.gutterIconsEnabled"' 'true'
         set_setting '."errorLens.messageEnabled"' 'true'
         ok "ErrorLens: configurado"
+    fi
+
+    # Instalar keybindings para Claude Code
+    echo ""
+    read -p "¿Instalar atajos de teclado para Claude Code? [Y/n] " -n 1 -r
+    echo ""
+
+    if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+        local keybindings_template="$TEMPLATE_DIR/keybindings/claude-code.json"
+        if [[ -f "$keybindings_template" ]]; then
+            if [[ -f "$VSCODE_KEYBINDINGS" ]]; then
+                # Merge keybindings existentes con los nuevos
+                if command -v jq &> /dev/null; then
+                    info "Mezclando keybindings existentes..."
+                    local temp_file=$(mktemp)
+                    jq -s 'add | unique_by(.key + .command)' "$VSCODE_KEYBINDINGS" "$keybindings_template" > "$temp_file"
+                    mv "$temp_file" "$VSCODE_KEYBINDINGS"
+                else
+                    warn "jq no disponible, sobrescribiendo keybindings"
+                    cp "$keybindings_template" "$VSCODE_KEYBINDINGS"
+                fi
+            else
+                cp "$keybindings_template" "$VSCODE_KEYBINDINGS"
+            fi
+            ok "Keybindings instalados:"
+            echo "      Ctrl+Alt+C    → Abrir Claude Code"
+            echo "      Ctrl+Escape   → Toggle focus editor/Claude"
+            echo "      Alt+K         → Insertar @ mention"
+        else
+            warn "Template de keybindings no encontrado: $keybindings_template"
+        fi
     fi
 
     echo ""

@@ -12,7 +12,10 @@
       "Bash(ruby -c:*)",
       "Bash(code --list-extensions:*)",
       "Bash(code --uninstall-extension:*)",
-      "Bash(code:*)"
+      "Bash(code:*)",
+      "Bash(bash -n:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd keybindings installation to claude-code setup\n\n- Fix symlink resolution in vscode-config \\(same fix as vscode-init\\)\n- Add keybindings installation step in claude-code setup\n- Merge with existing keybindings if present\n- Show installed shortcuts after setup\n\nThis ensures consistent keyboard shortcuts across installations.\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
     ]
   }
 }
