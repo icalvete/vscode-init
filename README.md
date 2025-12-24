@@ -183,7 +183,7 @@ vscode-config claude-code status
 
 **Opcionales** (se preguntan durante setup):
 - `eamodio.gitlens` - Historial git avanzado y blame
-- `streetsidesoftware.code-spell-checker` - Corrector ortográfico
+- `streetsidesoftware.code-spell-checker` - Corrector ortográfico (deshabilitada por defecto)
 - `christian-kohler.path-intellisense` - Autocompletado de rutas
 - `ms-vscode-remote.remote-ssh` - Desarrollo remoto por SSH
 - `ms-vscode-remote.remote-ssh-edit` - Editar configuración SSH

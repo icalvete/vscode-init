@@ -88,7 +88,7 @@ O desde VS Code:
 | Extensión | Descripción | Cuándo usarla |
 |-----------|-------------|---------------|
 | `eamodio.gitlens` | Git supercharged con blame, historial, diffs | Ver historial de cambios, quién modificó qué |
-| `streetsidesoftware.code-spell-checker` | Corrector ortográfico | Proyectos con documentación extensa |
+| `streetsidesoftware.code-spell-checker` | Corrector ortográfico (deshabilitada por defecto) | Proyectos con documentación extensa - Habilitar con `"cSpell.enabled": true` |
 | `christian-kohler.path-intellisense` | Autocompletado de rutas | Proyectos con muchos imports/requires |
 | `ms-vscode-remote.remote-ssh` | Desarrollo remoto SSH | Trabajar en servidores remotos |
 | `ms-vscode-remote.remote-ssh-edit` | Editar config SSH | Gestionar múltiples conexiones SSH |

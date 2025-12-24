@@ -71,7 +71,8 @@
   "errorLens.messageEnabled": true,
   "errorLens.statusBarIconsEnabled": true,
 
-  // Spell Checker - Para documentación
+  // Spell Checker - Deshabilitada por defecto (habilitar si es necesario)
+  "cSpell.enabled": false,
   "cSpell.language": "en,es",
   "cSpell.enableFiletypes": [
     "markdown",

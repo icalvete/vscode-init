@@ -97,6 +97,7 @@ COMANDOS
     restore <dir>       Restaura configuración desde backup
     show                Muestra configuración actual
     extensions list     Lista extensiones instaladas
+    extensions update   Actualiza todas las extensiones a la última versión
     extensions backup <file>    Guarda lista de extensiones
     extensions restore <file>   Instala extensiones desde lista
     claude-code setup   Configura VS Code para Claude Code (extensiones + settings)
@@ -723,6 +724,43 @@ Puedes añadirlo desde VS Code: Cmd/Ctrl+Shift+P → 'Shell Command: Install cod
             fi
             echo ""
             ;;
+        update)
+            echo ""
+            echo -e "${BOLD}Actualizando extensiones de VS Code...${NC}"
+            echo ""
+
+            if ! command -v code &> /dev/null; then
+                error "Comando 'code' no disponible en PATH"
+            fi
+
+            # Obtener lista de extensiones
+            local extensions=$(code --list-extensions 2>/dev/null)
+
+            if [[ -z "$extensions" ]]; then
+                warn "No hay extensiones instaladas"
+                exit 0
+            fi
+
+            local count=$(echo "$extensions" | wc -l)
+            info "Actualizando $count extensiones..."
+            echo ""
+
+            # Actualizar cada extensión
+            echo "$extensions" | while IFS= read -r ext; do
+                if [[ -n "$ext" ]]; then
+                    echo -n "  $ext... "
+                    if code --install-extension "$ext" --force &>/dev/null; then
+                        echo -e "${GREEN}✓${NC}"
+                    else
+                        echo -e "${YELLOW}✗${NC}"
+                    fi
+                fi
+            done
+
+            echo ""
+            ok "Extensiones actualizadas"
+            echo ""
+            ;;
         backup)
             if [[ -z "$arg" ]]; then
                 error "Falta el archivo de destino.
@@ -764,6 +802,7 @@ Uso: vscode-config extensions restore <archivo>"
 
 Uso:
   vscode-config extensions list
+  vscode-config extensions update
   vscode-config extensions backup <archivo>
   vscode-config extensions restore <archivo>"
             ;;
@@ -935,6 +974,10 @@ Puedes añadirlo desde VS Code: Cmd/Ctrl+Shift+P → 'Shell Command: Install cod
         set_setting '."errorLens.gutterIconsEnabled"' 'true'
         set_setting '."errorLens.messageEnabled"' 'true'
         ok "ErrorLens: configurado"
+
+        # Code Spell Checker: deshabilitada por defecto
+        set_setting '."cSpell.enabled"' 'false'
+        ok "Code Spell Checker: deshabilitada por defecto"
     fi
 
     # Instalar keybindings para Claude Code
