@@ -22,15 +22,40 @@ Inicializa proyectos con configuración para Claude Code y soporte para múltipl
 
 #### 🚀 Lenguajes y frameworks soportados
 
-| Lenguaje/Framework | Icono | Características |
-|-------------------|-------|-----------------|
-| **Ruby** | 💎 | Ruby LSP, RuboCop, convenciones YARD |
-| **Ruby on Rails** | 🛤️ | ERB templates, Rails best practices |
-| **Python** | 🐍 | Pylance, Black, Pylint, Jupyter notebooks |
-| **JavaScript** | 💛 | ESLint, JSDoc, modern ES6+ patterns |
-| **PHP** | 🐘 | Intelephense, PSR-12, PHPDoc |
-| **Godot Engine** | 🎮 | GDScript, C#, scene management patterns |
-| **Arduino/IoT** | 🔌 | PlatformIO, C/C++, embedded patterns |
+<table>
+  <tr>
+    <th>Lenguaje/Framework</th>
+    <th>Características</th>
+  </tr>
+  <tr>
+    <td><img src="assets/icons/ruby.svg" width="20" height="20" align="center"> <strong>Ruby</strong></td>
+    <td>Ruby LSP, RuboCop, convenciones YARD</td>
+  </tr>
+  <tr>
+    <td><img src="assets/icons/rails.svg" width="20" height="20" align="center"> <strong>Ruby on Rails</strong></td>
+    <td>ERB templates, Rails best practices</td>
+  </tr>
+  <tr>
+    <td><img src="assets/icons/python.svg" width="20" height="20" align="center"> <strong>Python</strong></td>
+    <td>Pylance, Black, Pylint, Jupyter notebooks</td>
+  </tr>
+  <tr>
+    <td><img src="assets/icons/javascript.svg" width="20" height="20" align="center"> <strong>JavaScript</strong></td>
+    <td>ESLint, JSDoc, modern ES6+ patterns</td>
+  </tr>
+  <tr>
+    <td><img src="assets/icons/php.svg" width="20" height="20" align="center"> <strong>PHP</strong></td>
+    <td>Intelephense, PSR-12, PHPDoc</td>
+  </tr>
+  <tr>
+    <td><img src="assets/icons/godot.svg" width="20" height="20" align="center"> <strong>Godot Engine</strong></td>
+    <td>GDScript, C#, scene management patterns</td>
+  </tr>
+  <tr>
+    <td><img src="assets/icons/arduino.svg" width="20" height="20" align="center"> <strong>Arduino/IoT</strong></td>
+    <td>PlatformIO, C/C++, embedded patterns</td>
+  </tr>
+</table>
 
 **Ejemplo de uso:**
 
