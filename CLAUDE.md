@@ -24,9 +24,11 @@ vscode-init ~/proyecto --ruby --rails --mcp-github
 
 Genera: `CLAUDE.md`, `.claude/commands/`, `.claude/mcp.json`, `.vscode/settings.json`
 
-Flags: `--ruby`, `--python`, `--javascript`, `--rails`, `--godot`, `--mcp-github`, `--mcp-postgres`
+Flags: `--ruby`, `--python`, `--javascript`, `--rails`, `--godot`, `--arduino`, `--mcp-github`, `--mcp-postgres`
 
-**Detección automática:** Godot (si encuentra `project.godot`)
+**Detección automática:**
+- Godot (si encuentra `project.godot`)
+- Arduino (si encuentra archivos `.ino`)
 
 ### vscode-config
 
@@ -58,9 +60,9 @@ vscode-init/
 │   ├── vscode-init          # Inicializa proyectos (~375 líneas bash)
 │   └── vscode-config        # Configura VS Code global (~1030 líneas bash)
 ├── templates/
-│   ├── claude-md/           # Templates CLAUDE.md (base, ruby, python, js, rails)
+│   ├── claude-md/           # Templates CLAUDE.md (base, ruby, python, js, rails, arduino)
 │   ├── commands/            # /document, /review, /explain, /security
-│   ├── extensions/          # Listas de extensiones (base, ruby, python, js, php)
+│   ├── extensions/          # Listas de extensiones (base, ruby, python, js, php, arduino)
 │   ├── keybindings/         # Atajos de teclado (claude-code.json)
 │   ├── mcp/                 # github.json, postgres.json
 │   ├── settings/            # Settings de Claude Code

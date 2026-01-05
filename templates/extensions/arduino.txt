@@ -1,0 +1,18 @@
+# Extensiones Arduino
+
+# Arduino Development (elegir una opción)
+# Opción 1: PlatformIO (más completo, recomendado)
+platformio.platformio-ide
+
+# Opción 2: Arduino (oficial de Microsoft, descontinuada pero funcional)
+# vsciot-vscode.vscode-arduino
+
+# C/C++ IntelliSense
+ms-vscode.cpptools
+ms-vscode.cpptools-extension-pack
+
+# Serial Monitor
+ms-vscode.vscode-serial-monitor
+
+# Opcional: Wokwi Arduino Simulator
+# wokwi.wokwi-vscode

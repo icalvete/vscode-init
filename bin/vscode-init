@@ -42,6 +42,7 @@ FLAG_JAVASCRIPT=false
 FLAG_PHP=false
 FLAG_RAILS=false
 FLAG_GODOT=false
+FLAG_ARDUINO=false
 FLAG_MCP_GITHUB=false
 FLAG_MCP_POSTGRES=false
 
@@ -65,12 +66,14 @@ Opciones:
   --php           Añade convenciones PHP (PSR-12, PHPDoc)
   --rails         Añade convenciones Ruby on Rails
   --godot         Añade configuración para Godot Engine 4.x
+  --arduino       Añade configuración para Arduino (PlatformIO)
   --mcp-github    Configura MCP para GitHub API
   --mcp-postgres  Configura MCP para PostgreSQL
   --help, -h      Muestra esta ayuda
 
 Detección automática:
   - Godot: si encuentra project.godot
+  - Arduino: si encuentra archivos .ino
 
 Ejemplos:
   vscode-init ~/proyectos/mi-app
@@ -318,7 +321,7 @@ show_summary() {
         echo "      └── settings.json"
     fi
 
-    # Mostrar extensiones recomendadas
+    # Recolectar extensiones recomendadas
     local has_extensions=false
     local extensions=""
 
@@ -338,31 +341,68 @@ show_summary() {
         extensions+=$(grep -v "^#" "$TEMPLATE_DIR/extensions/php.txt" | grep -v "^$")$'\n'
         has_extensions=true
     fi
+    if [[ "$FLAG_ARDUINO" == true && -f "$TEMPLATE_DIR/extensions/arduino.txt" ]]; then
+        extensions+=$(grep -v "^#" "$TEMPLATE_DIR/extensions/arduino.txt" | grep -v "^$")$'\n'
+        has_extensions=true
+    fi
 
     if [[ "$has_extensions" == true ]]; then
-        echo "Extensiones recomendadas:"
-        echo "$extensions" | grep -v "^$" | while read -r ext; do
-            echo "  - $ext"
-        done
-        echo ""
-
-        if command -v code &> /dev/null; then
-            read -p "¿Instalar extensiones? [s/N] " -n 1 -r
+        if ! command -v code &> /dev/null; then
+            echo "Extensiones recomendadas:"
+            echo "$extensions" | grep -v "^$" | while read -r ext; do
+                echo "  - $ext"
+            done
             echo ""
-            if [[ $REPLY =~ ^[Ss]$ ]]; then
-                echo ""
-                echo "$extensions" | grep -v "^$" | while read -r ext; do
-                    if code --install-extension "$ext" &> /dev/null; then
-                        ok "$ext instalada"
-                    else
-                        warn "No se pudo instalar $ext"
-                    fi
-                done
-                echo ""
-            fi
-        else
             warn "Comando 'code' no disponible. Instala las extensiones manualmente."
             echo ""
+        else
+            # Verificar qué extensiones faltan
+            local installed_extensions=$(code --list-extensions 2>/dev/null)
+            local missing_extensions=""
+            local already_installed=""
+
+            while IFS= read -r ext; do
+                [[ -z "$ext" ]] && continue
+                if echo "$installed_extensions" | grep -qi "^${ext}$"; then
+                    already_installed+="  - $ext"$'\n'
+                else
+                    missing_extensions+="$ext"$'\n'
+                fi
+            done <<< "$extensions"
+
+            # Mostrar extensiones ya instaladas
+            if [[ -n "$already_installed" ]]; then
+                echo "Extensiones ya instaladas:"
+                echo -n "$already_installed"
+                echo ""
+            fi
+
+            # Preguntar solo por las que faltan
+            if [[ -n "$missing_extensions" ]]; then
+                echo "Extensiones que faltan:"
+                echo "$missing_extensions" | grep -v "^$" | while read -r ext; do
+                    echo "  - $ext"
+                done
+                echo ""
+
+                read -p "¿Instalar extensiones que faltan? [s/N] " -n 1 -r
+                echo ""
+                if [[ $REPLY =~ ^[Ss]$ ]]; then
+                    echo ""
+                    echo "$missing_extensions" | grep -v "^$" | while read -r ext; do
+                        info "Instalando $ext..."
+                        if code --install-extension "$ext" --force &> /dev/null; then
+                            ok "$ext instalada"
+                        else
+                            warn "No se pudo instalar $ext"
+                        fi
+                    done
+                    echo ""
+                fi
+            else
+                ok "Todas las extensiones recomendadas ya están instaladas"
+                echo ""
+            fi
         fi
     fi
 
@@ -404,6 +444,10 @@ parse_args() {
                 ;;
             --godot)
                 FLAG_GODOT=true
+                shift
+                ;;
+            --arduino)
+                FLAG_ARDUINO=true
                 shift
                 ;;
             --mcp-github)
@@ -453,6 +497,12 @@ main() {
         FLAG_GODOT=true
     fi
 
+    # Detección automática de Arduino
+    if compgen -G "$TARGET_DIR/*.ino" > /dev/null 2>&1; then
+        info "Proyecto Arduino detectado (archivos .ino encontrados)"
+        FLAG_ARDUINO=true
+    fi
+
     echo ""
     info "Inicializando proyecto en: $TARGET_DIR"
     echo ""
@@ -490,6 +540,12 @@ main() {
     if [[ "$FLAG_GODOT" == true ]]; then
         copy_language "$TARGET_DIR" "godot"
         copy_godot_templates "$TARGET_DIR"
+    fi
+
+    # Copiar configuración Arduino
+    if [[ "$FLAG_ARDUINO" == true ]]; then
+        copy_language "$TARGET_DIR" "arduino"
+        copy_vscode_settings "$TARGET_DIR" "arduino"
     fi
 
     # Copiar comandos

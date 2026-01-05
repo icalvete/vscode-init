@@ -76,6 +76,9 @@ vscode-init ~/proyectos/mi-app --rails
 # Con game engine
 vscode-init ~/proyectos/mi-juego --godot
 
+# Con embedded/IoT
+vscode-init ~/proyectos/mi-sensor --arduino
+
 # Con MCP
 vscode-init ~/proyectos/mi-app --mcp-github
 vscode-init ~/proyectos/mi-app --mcp-postgres
@@ -83,8 +86,9 @@ vscode-init ~/proyectos/mi-app --mcp-postgres
 # Combinaciones
 vscode-init ~/proyectos/mi-app --rails --mcp-github
 
-# Detección automática (si hay project.godot)
-vscode-init ~/proyectos/mi-juego-existente
+# Detección automática
+vscode-init ~/proyectos/mi-juego-existente  # Si hay project.godot
+vscode-init ~/proyectos/mi-sketch-existente # Si hay archivos .ino
 ```
 
 ### Estructura generada
@@ -134,6 +138,7 @@ vscode-config restore ~/vscode-backup
 - **Python:** Python, Pylance, Debugpy, Black, Pylint, Jupyter (5 extensiones)
 - **JavaScript:** ESLint, Prettier
 - **PHP:** Intelephense, Xdebug
+- **Arduino:** PlatformIO IDE, C/C++ Tools, Serial Monitor
 
 Ver [documentación completa de extensiones](docs/vscode-init.md#extensiones-recomendadas).
 
