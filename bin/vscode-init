@@ -43,6 +43,7 @@ FLAG_PHP=false
 FLAG_RAILS=false
 FLAG_GODOT=false
 FLAG_ARDUINO=false
+ARDUINO_BOARD="uno"  # Default board para PlatformIO
 FLAG_MCP_GITHUB=false
 FLAG_MCP_POSTGRES=false
 
@@ -67,6 +68,8 @@ Opciones:
   --rails         Añade convenciones Ruby on Rails
   --godot         Añade configuración para Godot Engine 4.x
   --arduino       Añade configuración para Arduino (PlatformIO)
+  --board <name>  Placa Arduino/PlatformIO (default: uno)
+                  Ejemplos: uno, esp32dev, nanoatmega328, megaatmega2560
   --mcp-github    Configura MCP para GitHub API
   --mcp-postgres  Configura MCP para PostgreSQL
   --help, -h      Muestra esta ayuda
@@ -288,6 +291,79 @@ setup_mcp() {
     fi
 }
 
+# Inicializar proyecto PlatformIO
+init_platformio() {
+    local target="$1"
+    local board="$2"
+
+    info "Inicializando proyecto PlatformIO (board: $board)..."
+
+    # Buscar comando pio
+    local pio_cmd=""
+    if command -v pio &> /dev/null; then
+        pio_cmd="pio"
+    elif [[ -f ~/.platformio/penv/bin/pio ]]; then
+        pio_cmd="~/.platformio/penv/bin/pio"
+    else
+        warn "PlatformIO no encontrado, omitiendo inicialización PlatformIO"
+        echo ""
+        echo "Para instalar PlatformIO Core:"
+        echo "  curl -fsSL https://raw.githubusercontent.com/platformio/platformio-core-installer/master/get-platformio.py -o get-platformio.py"
+        echo "  python3 get-platformio.py"
+        echo ""
+        echo "O instala la extensión PlatformIO IDE en VS Code (recomendado):"
+        echo "  code --install-extension platformio.platformio-ide"
+        echo ""
+        return 1
+    fi
+
+    # Ejecutar pio project init
+    cd "$target" || error "No se pudo acceder al directorio $target"
+
+    if eval "$pio_cmd project init --board $board" &> /dev/null; then
+        ok "Proyecto PlatformIO inicializado con board: $board"
+
+        # Crear main.cpp básico si no existe
+        if [[ ! -f "$target/src/main.cpp" ]]; then
+            mkdir -p "$target/src"
+            cat > "$target/src/main.cpp" << 'EOF'
+#include <Arduino.h>
+
+// Pin del LED integrado
+const int LED_PIN = LED_BUILTIN;
+
+void setup() {
+  // Inicializar pin del LED como salida
+  pinMode(LED_PIN, OUTPUT);
+
+  // Inicializar comunicación serial
+  Serial.begin(9600);
+  Serial.println("Sistema iniciado");
+}
+
+void loop() {
+  // Encender LED
+  digitalWrite(LED_PIN, HIGH);
+  Serial.println("LED ON");
+  delay(1000);
+
+  // Apagar LED
+  digitalWrite(LED_PIN, LOW);
+  Serial.println("LED OFF");
+  delay(1000);
+}
+EOF
+            ok "Archivo src/main.cpp creado"
+        fi
+    else
+        warn "Error al inicializar PlatformIO (board: $board)"
+        echo "Verifica que la board '$board' sea válida con: pio boards"
+        return 1
+    fi
+
+    cd - > /dev/null || true
+}
+
 # Mostrar resumen final
 show_summary() {
     local target="$1"
@@ -450,6 +526,14 @@ parse_args() {
                 FLAG_ARDUINO=true
                 shift
                 ;;
+            --board)
+                if [[ -n "$2" && "$2" != -* ]]; then
+                    ARDUINO_BOARD="$2"
+                    shift 2
+                else
+                    error "--board requiere un argumento (ej: --board esp32dev)"
+                fi
+                ;;
             --mcp-github)
                 FLAG_MCP_GITHUB=true
                 shift
@@ -544,6 +628,10 @@ main() {
 
     # Copiar configuración Arduino
     if [[ "$FLAG_ARDUINO" == true ]]; then
+        # Inicializar PlatformIO primero (si está disponible)
+        init_platformio "$TARGET_DIR" "$ARDUINO_BOARD"
+
+        # Luego copiar templates y settings
         copy_language "$TARGET_DIR" "arduino"
         copy_vscode_settings "$TARGET_DIR" "arduino"
     fi
