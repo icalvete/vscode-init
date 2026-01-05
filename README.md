@@ -18,13 +18,31 @@ Este proyecto incluye dos herramientas:
 
 ### vscode-init
 
-Inicializa proyectos con configuración para Claude Code:
+Inicializa proyectos con configuración para Claude Code y soporte para múltiples lenguajes:
+
+#### 🚀 Lenguajes y frameworks soportados
+
+| Lenguaje/Framework | Icono | Características |
+|-------------------|-------|-----------------|
+| **Ruby** | 💎 | Ruby LSP, RuboCop, convenciones YARD |
+| **Ruby on Rails** | 🛤️ | ERB templates, Rails best practices |
+| **Python** | 🐍 | Pylance, Black, Pylint, Jupyter notebooks |
+| **JavaScript** | 💛 | ESLint, JSDoc, modern ES6+ patterns |
+| **PHP** | 🐘 | Intelephense, PSR-12, PHPDoc |
+| **Godot Engine** | 🎮 | GDScript, C#, scene management patterns |
+| **Arduino/IoT** | 🔌 | PlatformIO, C/C++, embedded patterns |
+
+**Ejemplo de uso:**
 
 ```bash
 vscode-init ~/proyectos/mi-app --ruby --rails --mcp-github
 ```
 
-Genera: `CLAUDE.md`, comandos personalizados (`/document`, `/review`, `/project-info`), y settings de VS Code.
+**Genera:**
+- `CLAUDE.md` con contexto del proyecto y convenciones específicas del lenguaje
+- Comandos personalizados: `/document`, `/review`, `/project-info`, `/security`
+- Settings de VS Code optimizados para cada lenguaje
+- Configuración MCP opcional (GitHub, PostgreSQL)
 
 ### vscode-config
 
