@@ -321,14 +321,27 @@ vscode-config claude-code status      Verifica instalación de Claude Code
 
 ## Archivos de configuración
 
-| Archivo | Ubicación (Linux) |
-|---------|-------------------|
-| Settings | `~/.config/Code/User/settings.json` |
-| Keybindings | `~/.config/Code/User/keybindings.json` |
-| Snippets | `~/.config/Code/User/snippets/` |
-| Runtime | `~/.config/Code/argv.json` |
+### Ubicaciones principales
+
+| Archivo | Ubicación (Linux) | Qué contiene |
+|---------|-------------------|--------------|
+| **settings.json** | `~/.config/Code/User/settings.json` | Configuración global de VS Code: telemetría, auto-save, format on save, settings de extensiones |
+| **keybindings.json** | `~/.config/Code/User/keybindings.json` | Atajos de teclado personalizados (incluye Ctrl+Alt+C para Claude Code) |
+| **snippets/** | `~/.config/Code/User/snippets/` | Snippets de código personalizados por lenguaje |
+| **argv.json** | `~/.config/Code/argv.json` | Configuración de runtime: locale, flags de Chromium, proxy |
 
 En **macOS**: `~/Library/Application Support/Code/User/`
+
+### Archivos por proyecto
+
+Cada proyecto inicializado con `vscode-init` contiene:
+
+| Archivo | Ubicación | Qué contiene |
+|---------|-----------|--------------|
+| **CLAUDE.md** | `proyecto/CLAUDE.md` | Contexto del proyecto: lenguaje, convenciones, comandos útiles, patterns específicos |
+| **settings.json** | `proyecto/.vscode/settings.json` | Settings específicos del proyecto: formateo, linting, configuración del lenguaje |
+| **commands/** | `proyecto/.claude/commands/` | Comandos personalizados: `/document`, `/review`, `/explain`, `/security` |
+| **mcp.json** | `proyecto/.claude/mcp.json` | Configuración MCP (GitHub, PostgreSQL) si se usa `--mcp-*` |
 
 ---
 
