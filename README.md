@@ -20,7 +20,7 @@ Este proyecto incluye dos herramientas:
 
 Inicializa proyectos con configuración para Claude Code y soporte para múltiples lenguajes:
 
-#### 🚀 Lenguajes y frameworks soportados
+#### Lenguajes y frameworks soportados
 
 <table>
   <tr>
