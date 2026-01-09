@@ -48,6 +48,10 @@ Inicializa proyectos con configuración para Claude Code y soporte para múltipl
     <td>Intelephense, PSR-12, PHPDoc</td>
   </tr>
   <tr>
+    <td><img src="assets/icons/cpp.svg" width="20" height="20" align="center"> <strong>C/C++</strong></td>
+    <td>CMake, C++17/20, smart pointers, RAII</td>
+  </tr>
+  <tr>
     <td><img src="assets/icons/godot.svg" width="20" height="20" align="center"> <strong>Godot Engine</strong></td>
     <td>GDScript, C#, scene management patterns</td>
   </tr>
@@ -191,6 +195,7 @@ Ver [docs/vscode-init.md](docs/vscode-init.md) para más detalles.
 - **Python:** Python, Pylance, Debugpy, Black, Pylint, Jupyter (5 extensiones)
 - **JavaScript:** ESLint, Prettier
 - **PHP:** Intelephense, Xdebug
+- **C/C++:** C/C++ Extension Pack, CMake Tools, CMake language
 - **Arduino:** PlatformIO IDE, C/C++ Tools, Serial Monitor
 
 Ver [documentación completa de extensiones](docs/vscode-init.md#extensiones-recomendadas).

@@ -24,11 +24,12 @@ vscode-init ~/proyecto --ruby --rails --mcp-github
 
 Genera: `CLAUDE.md`, `.claude/commands/`, `.claude/mcp.json`, `.vscode/settings.json`
 
-Flags: `--ruby`, `--python`, `--javascript`, `--rails`, `--godot`, `--arduino`, `--mcp-github`, `--mcp-postgres`
+Flags: `--ruby`, `--python`, `--javascript`, `--rails`, `--godot`, `--arduino`, `--cpp`, `--mcp-github`, `--mcp-postgres`
 
 **Detección automática:**
 - Godot (si encuentra `project.godot`)
 - Arduino (si encuentra archivos `.ino`)
+- C/C++ (si encuentra `CMakeLists.txt` o `Makefile`)
 
 ### vscode-config
 
@@ -48,6 +49,7 @@ make install PREFIX=~/.local
 
 # Probar
 ./bin/vscode-init /tmp/test --ruby
+./bin/vscode-init /tmp/test-cpp --cpp
 ./bin/vscode-config show
 ./bin/vscode-config claude-code status
 ```
@@ -60,9 +62,9 @@ vscode-init/
 │   ├── vscode-init          # Inicializa proyectos (~375 líneas bash)
 │   └── vscode-config        # Configura VS Code global (~1030 líneas bash)
 ├── templates/
-│   ├── claude-md/           # Templates CLAUDE.md (base, ruby, python, js, rails, arduino)
+│   ├── claude-md/           # Templates CLAUDE.md (base, ruby, python, js, rails, arduino, cpp)
 │   ├── commands/            # /document, /review, /explain, /security
-│   ├── extensions/          # Listas de extensiones (base, ruby, python, js, php, arduino)
+│   ├── extensions/          # Listas de extensiones (base, ruby, python, js, php, arduino, cpp)
 │   ├── keybindings/         # Atajos de teclado (claude-code.json)
 │   ├── mcp/                 # github.json, postgres.json
 │   ├── settings/            # Settings de Claude Code

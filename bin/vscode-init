@@ -40,6 +40,7 @@ FLAG_RUBY=false
 FLAG_PYTHON=false
 FLAG_JAVASCRIPT=false
 FLAG_PHP=false
+FLAG_CPP=false
 FLAG_RAILS=false
 FLAG_GODOT=false
 FLAG_ARDUINO=false
@@ -65,6 +66,7 @@ Opciones:
   --python        Añade convenciones Python (PEP8, docstrings)
   --javascript    Añade convenciones JavaScript (JSDoc, ESLint)
   --php           Añade convenciones PHP (PSR-12, PHPDoc)
+  --cpp           Añade convenciones C/C++ (CMake, C++17/20)
   --rails         Añade convenciones Ruby on Rails
   --godot         Añade configuración para Godot Engine 4.x
   --arduino       Añade configuración para Arduino (PlatformIO)
@@ -77,6 +79,7 @@ Opciones:
 Detección automática:
   - Godot: si encuentra project.godot
   - Arduino: si encuentra archivos .ino
+  - C/C++: si encuentra CMakeLists.txt o Makefile
 
 Ejemplos:
   vscode-init ~/proyectos/mi-app
@@ -417,6 +420,10 @@ show_summary() {
         extensions+=$(grep -v "^#" "$TEMPLATE_DIR/extensions/php.txt" | grep -v "^$")$'\n'
         has_extensions=true
     fi
+    if [[ "$FLAG_CPP" == true && -f "$TEMPLATE_DIR/extensions/cpp.txt" ]]; then
+        extensions+=$(grep -v "^#" "$TEMPLATE_DIR/extensions/cpp.txt" | grep -v "^$")$'\n'
+        has_extensions=true
+    fi
     if [[ "$FLAG_ARDUINO" == true && -f "$TEMPLATE_DIR/extensions/arduino.txt" ]]; then
         extensions+=$(grep -v "^#" "$TEMPLATE_DIR/extensions/arduino.txt" | grep -v "^$")$'\n'
         has_extensions=true
@@ -513,6 +520,10 @@ parse_args() {
                 FLAG_PHP=true
                 shift
                 ;;
+            --cpp|--c++)
+                FLAG_CPP=true
+                shift
+                ;;
             --rails)
                 FLAG_RAILS=true
                 FLAG_RUBY=true  # Rails implica Ruby
@@ -587,6 +598,12 @@ main() {
         FLAG_ARDUINO=true
     fi
 
+    # Detección automática de C/C++
+    if [[ -f "$TARGET_DIR/CMakeLists.txt" ]] || [[ -f "$TARGET_DIR/Makefile" ]]; then
+        info "Proyecto C/C++ detectado (CMakeLists.txt o Makefile encontrado)"
+        FLAG_CPP=true
+    fi
+
     echo ""
     info "Inicializando proyecto en: $TARGET_DIR"
     echo ""
@@ -613,6 +630,11 @@ main() {
     if [[ "$FLAG_PHP" == true ]]; then
         copy_language "$TARGET_DIR" "php"
         copy_vscode_settings "$TARGET_DIR" "php"
+    fi
+
+    if [[ "$FLAG_CPP" == true ]]; then
+        copy_language "$TARGET_DIR" "cpp"
+        copy_vscode_settings "$TARGET_DIR" "cpp"
     fi
 
     # Copiar frameworks
