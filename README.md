@@ -84,14 +84,16 @@ vscode-config setup
 
 ---
 
-## Instalación
+## Instalación y configuración inicial
+
+### 1. Instalar vscode-init
 
 ```bash
-# 1. Instalar dependencia
+# Instalar dependencia
 sudo apt install jq      # Ubuntu/Debian
 brew install jq          # macOS
 
-# 2. Clonar en tu home e instalar
+# Clonar en tu home e instalar
 cd ~
 git clone https://github.com/icalvete/vscode-init.git
 cd vscode-init
@@ -99,6 +101,36 @@ make install
 ```
 
 > **Importante**: La instalación crea symlinks a este directorio. No lo borres ni lo muevas después de instalar.
+
+### 2. Configurar VS Code (setup inicial)
+
+**Después de instalar, configura VS Code globalmente:**
+
+```bash
+# Aplicar configuración recomendada (privacidad + productividad)
+vscode-config setup
+```
+
+Esto configura:
+- ✅ Telemetría desactivada (VS Code + extensiones populares)
+- ✅ Workspace Trust y confirmaciones de git activadas
+- ✅ Auto-save, format on save, sticky scroll
+- ✅ Mejoras de productividad
+
+**Ver configuración actual:**
+```bash
+vscode-config show
+```
+
+### 3. Backup y restore (opcional)
+
+```bash
+# Guardar tu configuración actual (antes de hacer cambios)
+vscode-config backup ~/vscode-backup
+
+# Restaurar desde backup (settings, keybindings, snippets, extensiones)
+vscode-config restore ~/vscode-backup
+```
 
 ---
 
@@ -150,29 +182,7 @@ Ver [docs/vscode-init.md](docs/vscode-init.md) para más detalles.
 
 ---
 
-## Configurar VS Code (vscode-config)
-
-### Configuración básica
-
-```bash
-# Aplicar configuración recomendada (privacidad + productividad)
-vscode-config setup
-
-# Ver qué está configurado actualmente
-vscode-config show
-```
-
-### Backup y restore
-
-```bash
-# Guardar configuración actual
-vscode-config backup ~/vscode-backup
-
-# Restaurar (settings, keybindings, snippets, extensiones)
-vscode-config restore ~/vscode-backup
-```
-
-### Extensiones
+## Extensiones por lenguaje
 
 `vscode-init` ofrece instalar extensiones según el lenguaje del proyecto:
 
