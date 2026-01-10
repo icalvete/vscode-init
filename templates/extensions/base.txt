@@ -12,8 +12,8 @@ esbenp.prettier-vscode
 yzhang.markdown-all-in-one
 christian-kohler.path-intellisense
 
-# Calidad de código
-sonarsource.sonarlint-vscode
+# Calidad de código (ADVERTENCIA: consume mucha RAM - 1-2GB)
+# sonarsource.sonarlint-vscode
 
 # Docker y contenedores
 ms-azuretools.vscode-docker
