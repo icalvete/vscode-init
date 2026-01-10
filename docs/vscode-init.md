@@ -82,6 +82,7 @@ Estas se ofrecen en todos los proyectos:
 | `esbenp.prettier-vscode` | Formateador de código multilenguaje |
 | `yzhang.markdown-all-in-one` | Soporte completo para Markdown (editar CLAUDE.md) |
 | `christian-kohler.path-intellisense` | Autocompletado de rutas de archivos |
+| `mechatroner.rainbow-csv` | Colorea columnas CSV/TSV para facilitar lectura |
 | **Calidad de código (opcional)** | |
 | `sonarsource.sonarlint-vscode` | ⚠️ Análisis estático en tiempo real - **Consume 1-2GB RAM** (comentada por defecto) |
 | **Docker y contenedores** | |

@@ -190,7 +190,7 @@ Ver [docs/vscode-init.md](docs/vscode-init.md) para más detalles.
 
 `vscode-init` ofrece instalar extensiones según el lenguaje del proyecto:
 
-- **Base:** Remote SSH, ErrorLens, Prettier, Markdown, Docker
+- **Base:** Remote SSH, ErrorLens, Prettier, Markdown, Rainbow CSV, Docker
 - **Ruby:** Ruby LSP, Solargraph, RuboCop, ERB
 - **Python:** Python, Pylance, Debugpy, Black, Pylint, Jupyter (5 extensiones)
 - **JavaScript:** ESLint, Prettier

@@ -11,6 +11,7 @@ usernamehw.errorlens
 esbenp.prettier-vscode
 yzhang.markdown-all-in-one
 christian-kohler.path-intellisense
+mechatroner.rainbow-csv
 
 # Calidad de código (ADVERTENCIA: consume mucha RAM - 1-2GB)
 # sonarsource.sonarlint-vscode
