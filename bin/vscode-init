@@ -110,16 +110,6 @@ validate_directory() {
     if [[ "$dir" == "$HOME" || "$dir" == "/" ]]; then
         error "No se puede inicializar en $dir (demasiado peligroso)"
     fi
-
-    # Advertir si ya existe CLAUDE.md
-    if [[ -f "$dir/CLAUDE.md" ]]; then
-        warn "Ya existe CLAUDE.md en $dir"
-        read -p "¿Sobrescribir? [s/N] " -n 1 -r
-        echo
-        if [[ ! $REPLY =~ ^[Ss]$ ]]; then
-            error "Cancelado por el usuario"
-        fi
-    fi
 }
 
 # Resolver ruta absoluta
@@ -137,10 +127,15 @@ resolve_path() {
     echo "$path"
 }
 
-# Copiar template base de CLAUDE.md
+# Copiar template base de CLAUDE.md (solo si no existe — modo append por defecto)
 copy_base() {
     local target="$1"
     local project_name="$(basename "$target")"
+
+    if [[ -f "$target/CLAUDE.md" ]]; then
+        info "CLAUDE.md existente detectado — modo append (se preservará tu contenido)"
+        return
+    fi
 
     info "Creando CLAUDE.md base..."
 
@@ -150,18 +145,29 @@ copy_base() {
     ok "CLAUDE.md creado"
 }
 
-# Añadir sección de lenguaje al CLAUDE.md
+# Añadir sección de lenguaje al CLAUDE.md (idempotente: salta si ya está presente)
 copy_language() {
     local target="$1"
     local lang="$2"
+    local template="$TEMPLATE_DIR/claude-md/$lang.md"
 
-    if [[ -f "$TEMPLATE_DIR/claude-md/$lang.md" ]]; then
-        info "Añadiendo sección $lang..."
-        cat "$TEMPLATE_DIR/claude-md/$lang.md" >> "$target/CLAUDE.md"
-        ok "Sección $lang añadida"
-    else
+    if [[ ! -f "$template" ]]; then
         warn "Template $lang.md no encontrado"
+        return
     fi
+
+    # Detectar el primer heading "## ..." del template como anchor de la sección
+    local anchor
+    anchor="$(grep -m1 '^## ' "$template" || true)"
+
+    if [[ -n "$anchor" ]] && [[ -f "$target/CLAUDE.md" ]] && grep -Fxq "$anchor" "$target/CLAUDE.md"; then
+        info "Sección $lang ya presente, saltando"
+        return
+    fi
+
+    info "Añadiendo sección $lang..."
+    cat "$template" >> "$target/CLAUDE.md"
+    ok "Sección $lang añadida"
 }
 
 # Copiar settings de VS Code

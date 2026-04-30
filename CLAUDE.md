@@ -31,13 +31,13 @@ vscode-init proporciona dos herramientas bash para configurar Visual Studio Code
 ### Instalación
 
 ```bash
+# Instalar en ~/.local/bin (default, sin sudo)
+make install
+
 # Instalar en /usr/local/bin (requiere sudo)
-sudo make install
+sudo make install PREFIX=/usr/local
 
-# Instalar en directorio de usuario (sin sudo)
-make install PREFIX=~/.local
-
-# Desinstalar
+# Desinstalar (debe coincidir el PREFIX usado al instalar)
 make uninstall
 ```
 
@@ -47,11 +47,11 @@ make uninstall
 
 ### vscode-init (bin/vscode-init)
 
-Script principal (~678 líneas) que inicializa proyectos. Funciones clave:
+Script principal que inicializa proyectos. Funciones clave:
 
 - **parse_args()** - Parsea flags de línea de comandos (`--ruby`, `--python`, `--arduino`, etc.)
-- **copy_base()** - Crea CLAUDE.md desde `templates/claude-md/base.md`
-- **copy_language()** - Añade secciones específicas de lenguaje a CLAUDE.md
+- **copy_base()** - Crea CLAUDE.md desde `templates/claude-md/base.md`. Si ya existe un CLAUDE.md, lo deja intacto (modo append por defecto)
+- **copy_language()** - Añade secciones específicas de lenguaje a CLAUDE.md. Idempotente: detecta el primer heading `## ...` del template como anchor y salta si ya está presente
 - **copy_vscode_settings()** - Copia/mergea `templates/vscode/{lang}.json` en `.vscode/settings.json`
 - **copy_godot_templates()** - Maneja la estructura compleja de templates de Godot (.vscode/, .editorconfig, .gitignore)
 - **init_platformio()** - Inicializa proyectos PlatformIO para Arduino (ejecuta `pio project init`, crea src/main.cpp)
@@ -65,7 +65,7 @@ Script principal (~678 líneas) que inicializa proyectos. Funciones clave:
 
 ### vscode-config (bin/vscode-config)
 
-Gestor de configuración global de VS Code (~1128 líneas). Funciones clave:
+Gestor de configuración global de VS Code. Funciones clave:
 
 - **cmd_setup()** - Aplica configuración de privacidad/seguridad/productividad a `~/.config/Code/User/settings.json`
   - Desactiva telemetría (VS Code + extensiones populares: RedHat, Julia, GitLens, AWS, Terraform)
@@ -107,6 +107,9 @@ Gestor de configuración global de VS Code (~1128 líneas). Funciones clave:
 - `.vscode/settings.json`, `.vscode/launch.json`, `.vscode/tasks.json`
 - `.editorconfig`, `.gitignore`
 
+**templates/settings/**: Settings JSON aplicados por `vscode-config` a la configuración global
+- `claude-code.json` - Settings que se mergean en `~/.config/Code/User/settings.json` durante `claude-code setup`
+
 ### Detalles clave de implementación
 
 **Merge de JSON:** Ambos scripts usan `jq -s '.[0] * .[1]'` para mergear archivos JSON en lugar de sobrescribir. Esto permite:
@@ -130,6 +133,11 @@ done
 4. Solo pregunta por instalar las faltantes
 
 **Integración con PlatformIO:** Para proyectos Arduino, el script intenta ejecutar `pio project init` para crear platformio.ini, pero maneja gracefully la ausencia de PlatformIO mostrando instrucciones de instalación.
+
+**Re-ejecución segura (modo append por defecto):** Ejecutar `vscode-init` sobre un directorio ya inicializado nunca sobrescribe el `CLAUDE.md` existente:
+- Si no hay `CLAUDE.md`, se crea desde `base.md` y se añaden las secciones de lenguaje.
+- Si ya existe, `copy_base` lo preserva y `copy_language` solo añade secciones cuyo heading no esté ya presente. Esto permite añadir flags después (ej. `--mcp-github`) sin destruir contenido custom.
+- Caveats: `.claude/commands/*.md` siempre se sobrescriben (los comandos son templated, no editables localmente). `.vscode/settings.json` y `.claude/mcp.json` se mergean con `jq`.
 
 ## Tareas comunes
 
